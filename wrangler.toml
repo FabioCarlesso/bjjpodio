@@ -1,5 +1,12 @@
-# Configuração do Cloudflare Pages.
-# No painel: Framework preset "None", build command vazio, output directory "public".
+# Cloudflare Worker só com arquivos estáticos (sem código de servidor).
+# O deploy roda "npx wrangler deploy" a cada push na main (Workers Builds).
+# "name" precisa ser igual ao nome do Worker no painel da Cloudflare.
 name = "bjjpodio"
-pages_build_output_dir = "./public"
 compatibility_date = "2026-10-01"
+
+[assets]
+directory = "./public"
+# /atleta serve atleta.html (e /atleta.html redireciona para /atleta).
+html_handling = "auto-trailing-slash"
+# Endereço inexistente serve public/404.html com status 404.
+not_found_handling = "404-page"

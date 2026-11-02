@@ -8,32 +8,24 @@ Fase atual: protótipo estático com dados fictícios para validar a ideia. Plan
 
 - HTML + CSS + JavaScript puro (ES modules), sem build
 - Dados em `public/data/*.json`; o ranking é calculado no navegador
-- Hospedagem: Cloudflare Pages
+- Hospedagem: Cloudflare Workers (só arquivos estáticos de `public/`, sem código de servidor)
 
 ## Rodar localmente
 
 ```bash
-npx wrangler pages dev public   # simula o Pages (URLs limpas e _headers)
-# ou
-npx serve public
+npm run dev        # wrangler dev: simula a Cloudflare (URLs limpas, 404 e _headers) em http://localhost:8787
 ```
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Workers)
 
-Cloudflare → Workers & Pages → Create → Pages → Connect to Git → `bjjpodio`:
+O Worker `bjjpodio` está conectado ao GitHub (Workers Builds). Cada push na `main` roda `npx wrangler deploy`, que publica a pasta `public/` conforme o `wrangler.toml`. Não há comando de build.
 
-| Campo | Valor |
-|---|---|
-| Production branch | `main` |
-| Framework preset | None |
-| Build command | *(vazio)* |
-| Build output directory | `public` |
-
-Cada push na `main` publica em `bjjpodio.pages.dev`. Outras branches ganham URL de preview.
+- O `name` no `wrangler.toml` precisa ser igual ao nome do Worker no painel
+- Endereço: `bjjpodio.<subdomínio-da-conta>.workers.dev`
 
 ### Endereço do site
 
-A imagem de prévia de link (`og:image`) precisa de endereço completo e está como `https://bjjpodio.pages.dev`. Se o Pages der outro endereço (ex.: `bjjpodio-abc.pages.dev`) ou quando houver domínio próprio, troque em todas as páginas:
+A imagem de prévia de link (`og:image`) precisa de endereço completo e está como `https://bjjpodio.pages.dev`. Troque pelo endereço real do Worker (e depois pelo domínio próprio) em todas as páginas:
 
 ```bash
 grep -rl "bjjpodio.pages.dev" public | xargs sed -i 's#https://bjjpodio.pages.dev#https://NOVO-ENDERECO#g'
@@ -60,7 +52,7 @@ Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atle
 1. Adicionar os pódios em `public/data/resultados.json` (um por linha)
 2. Atleta novo? Adicionar em `atletas.json` com um `id` único (`nome-sobrenome-sigla`)
 3. `npm test` para conferir
-4. Push na `main`: o Pages publica em cerca de 1 minuto
+4. Push na `main`: a Cloudflare publica em cerca de 1 minuto
 
 ## Estrutura
 
@@ -73,5 +65,5 @@ public/            site publicado
   data/            regras, categorias, campeonatos, academias, atletas, resultados
   _headers         cache e cabeçalhos de segurança
 tests/             testes do ranking e validação dos dados
-wrangler.toml      config do Pages
+wrangler.toml      config do Worker (pasta public/, URLs limpas, 404)
 ```
