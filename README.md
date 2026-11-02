@@ -21,14 +21,14 @@ npm run dev        # wrangler dev: simula a Cloudflare (URLs limpas, 404 e _head
 O Worker `bjjpodio` está conectado ao GitHub (Workers Builds). Cada push na `main` roda `npx wrangler deploy`, que publica a pasta `public/` conforme o `wrangler.toml`. Não há comando de build.
 
 - O `name` no `wrangler.toml` precisa ser igual ao nome do Worker no painel
-- Endereço: `bjjpodio.<subdomínio-da-conta>.workers.dev`
+- Endereço: https://bjjpodio.fabio-carlesso.workers.dev
 
 ### Endereço do site
 
-A imagem de prévia de link (`og:image`) precisa de endereço completo e está como `https://bjjpodio.pages.dev`. Troque pelo endereço real do Worker (e depois pelo domínio próprio) em todas as páginas:
+A imagem de prévia de link (`og:image`) precisa de endereço completo e está como `https://bjjpodio.fabio-carlesso.workers.dev`. Quando houver domínio próprio, troque em todas as páginas:
 
 ```bash
-grep -rl "bjjpodio.pages.dev" public | xargs sed -i 's#https://bjjpodio.pages.dev#https://NOVO-ENDERECO#g'
+grep -rl "bjjpodio.fabio-carlesso.workers.dev" public | xargs sed -i 's#https://bjjpodio.fabio-carlesso.workers.dev#https://NOVO-DOMINIO#g'
 ```
 
 ### Fora do Google durante o protótipo
