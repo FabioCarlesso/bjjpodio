@@ -409,6 +409,7 @@ Link do protótipo, de preferência já com a primeira etapa real importada do T
 | 2026-11 | **Torneios contemplados = todos os do Paraná no Torneio Fácil** (`npm run sincronizar`): 81 eventos de 2023 a 2026; gi e no-gi do mesmo evento viram uma etapa; etapas novas entram como regional ×1 e edições manuais em `campeonatos.json` não são sobrescritas |
 | 2026-11 | Só 3 desses eventos têm pódios publicados no Torneio Fácil (50 colocações); os demais aparecem em **Etapas** como "sem pódios publicados" e passam a contar quando o organizador lançar os pódios lá |
 | 2026-11 | Etapa passada/próxima decidida pela data (antes: "sem resultado" = próxima) |
+| 2026-11 | CI no GitHub Actions (`.github/workflows/testes.yml`): `npm test` + `wrangler deploy --dry-run` em todo PR e push na `main` |
 
 ---
 
