@@ -10,3 +10,7 @@ directory = "./public"
 html_handling = "auto-trailing-slash"
 # Endereço inexistente serve public/404.html com status 404.
 not_found_handling = "404-page"
+
+# Prévias das branches de PR (Workers Builds roda "npx wrangler preview" fora da main).
+# O bloco pode ficar vazio: arquivos estáticos e compatibilidade vêm do topo deste arquivo.
+[previews]

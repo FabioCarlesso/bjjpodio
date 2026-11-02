@@ -22,6 +22,7 @@ npm run dev        # wrangler dev: simula a Cloudflare (URLs limpas, 404 e _head
 O Worker `bjjpodio` está conectado ao GitHub (Workers Builds). Cada push na `main` roda `npx wrangler deploy`, que publica a pasta `public/` conforme o `wrangler.toml`. Não há comando de build.
 
 - O `name` no `wrangler.toml` precisa ser igual ao nome do Worker no painel
+- Branches de PR rodam `npx wrangler preview` (prévia, em beta), que exige o bloco `[previews]` no `wrangler.toml`
 - Endereço: https://bjjpodio.fabio-carlesso.workers.dev
 
 ### Endereço do site

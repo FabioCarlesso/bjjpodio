@@ -401,6 +401,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Kimono e no-gi em rankings separados (a CBJJ só tem kimono) |
 | 2026-11 | Fim do ranking geral: página inicial com um bloco por ranking (gênero + idade + faixa) e página `/ranking` com a lista completa |
 | 2026-11 | Dados fictícios de 2024 e 2025 para mostrar o peso das temporadas, trocas de faixa e atleta sozinho na chave |
+| 2026-11 | `[previews]` no `wrangler.toml`: o Workers Builds roda `npx wrangler preview` nas branches de PR, e o comando exige esse bloco (vazio basta) |
 
 ---
 
