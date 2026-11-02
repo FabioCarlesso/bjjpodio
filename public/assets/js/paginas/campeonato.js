@@ -1,8 +1,9 @@
 // Página da etapa (/campeonato?id=slug): dados, quadro de medalhas por academia e pódios por categoria.
+// Os pontos mostrados são o quanto cada pódio vale hoje no ranking (com o peso da temporada da etapa).
 
-import { pontosDoResultado } from '../ranking.js';
+import { pontosDoResultado, pesoDaTemporada, temporadaDe } from '../ranking.js';
 import {
-  esc, formatarPontos, rotuloPts, formatarData, plural, urlAtleta, urlRanking, montarPagina, parametro,
+  esc, formatarPontos, rotuloPts, formatarData, plural, urlAtleta, urlAcademia, montarPagina, parametro,
   definirTitulo, naoEncontrado, rotuloCategoria, nomeNivel, nomeModalidade,
   faixaBadge, pintarFaixas, medalha, seloPosicao,
 } from '../render.js';
@@ -17,6 +18,8 @@ montarPagina((dados, ctx) => {
   }
 
   const peso = dados.regras.pesoPorNivel[camp.nivel] ?? 1;
+  const temporadaAtual = Number(dados.regras.temporada);
+  const pesoTemporada = pesoDaTemporada(temporadaDe(camp), temporadaAtual, dados.regras);
   const resultados = dados.resultados
     .filter((r) => r.campeonatoId === id)
     .map((r) => {
@@ -32,7 +35,8 @@ montarPagina((dados, ctx) => {
       <h1>${esc(camp.nome)}</h1>
       <p class="perfil__sub">${formatarData(camp.data, { ano: true })} <span aria-hidden="true">·</span> ${esc(camp.cidade)}</p>
       <ul class="tags">
-        <li class="tag tag--nivel">${esc(nomeNivel(camp.nivel, ctx))} · pontos ×${formatarPontos(peso)}</li>
+        <li class="tag tag--nivel">${esc(nomeNivel(camp.nivel, ctx))} · etapa ×${formatarPontos(peso)}</li>
+        <li class="tag">${pesoTemporada ? `Temporada ${temporadaDe(camp)} · ×${formatarPontos(pesoTemporada)} no ranking ${temporadaAtual}` : `Temporada ${temporadaDe(camp)} · não conta mais no ranking`}</li>
         ${camp.modalidade.map((m) => `<li class="tag">${esc(nomeModalidade(m, ctx))}</li>`).join('')}
       </ul>
     </header>
@@ -57,7 +61,7 @@ montarPagina((dados, ctx) => {
           <div class="numeros__item"><dt>Categorias</dt><dd>${categorias.length}</dd></div>
           <div class="numeros__item"><dt>Atletas no pódio</dt><dd>${atletas}</dd></div>
           <div class="numeros__item"><dt>Academias</dt><dd>${academias.length}</dd></div>
-          <div class="numeros__item"><dt>Ouro vale</dt><dd>${formatarPontos(pontosDoResultado({ posicao: 1 }, camp, dados.regras))} <small>pts</small></dd></div>
+          <div class="numeros__item"><dt>Ouro vale hoje</dt><dd>${formatarPontos(pontosDoResultado({ posicao: 1, peso: '' }, camp, dados.regras))} <small>pts</small></dd></div>
         </dl>
       </section>
 
@@ -71,12 +75,12 @@ montarPagina((dados, ctx) => {
 
       <section class="container section" aria-labelledby="titulo-quadro">
         <h2 id="titulo-quadro">Quadro de medalhas</h2>
-        <div class="tabela-rolagem">
+        <div class="tabela-rolagem" tabindex="0" role="region" aria-label="Tabela: quadro de medalhas">
           <table class="tabela">
             <thead><tr><th scope="col">Academia</th><th scope="col">Ouro</th><th scope="col">Prata</th><th scope="col">Bronze</th><th scope="col">Pontos</th></tr></thead>
             <tbody>${academias.map((a) => `
               <tr>
-                <th scope="row"><a href="${urlRanking({ academia: a.id })}">${esc(a.nome)}</a></th>
+                <th scope="row"><a href="${urlAcademia(a.id)}">${esc(a.nome)}</a></th>
                 <td>${medalha('ouros', a.ouros)}</td><td>${medalha('pratas', a.pratas)}</td><td>${medalha('bronzes', a.bronzes)}</td>
                 <td class="tabela__num">${formatarPontos(a.pontos)}</td>
               </tr>`).join('')}
@@ -110,7 +114,7 @@ montarPagina((dados, ctx) => {
     return `
       <details class="acordeao__item">
         <summary>
-          <span class="acordeao__titulo">${faixaBadge(cat.faixa, ctx)} ${esc(rotuloCategoria(cat, ctx))}</span>
+          <span class="acordeao__titulo">${faixaBadge(cat.faixa, ctx, { decorativo: true })} ${esc(rotuloCategoria(cat, ctx))}</span>
           <span class="acordeao__resumo">${campeao
             ? `<span class="medalha__dot medalha--ouros" aria-hidden="true"></span><span class="visually-hidden">Ouro: </span>${esc(campeao.atleta.nome)}`
             : plural(cat.podio.length, 'atleta', 'atletas')}</span>

@@ -31,6 +31,7 @@
   <link rel="modulepreload" href="/assets/js/data.js">
   <link rel="modulepreload" href="/assets/js/ranking.js">
   <link rel="modulepreload" href="/assets/js/render.js">
+  <link rel="modulepreload" href="/assets/js/filters.js">
   <link rel="preload" href="/data/regras.json" as="fetch" crossorigin>
   <link rel="preload" href="/data/categorias.json" as="fetch" crossorigin>
   <link rel="preload" href="/data/campeonatos.json" as="fetch" crossorigin>
@@ -47,6 +48,7 @@
     <div class="container page-header">
       <h1>Etapas</h1>
       <p id="etapas-resumo">Campeonatos que valem pontos na temporada.</p>
+      <nav class="chips-links" id="temporadas" aria-label="Temporadas" hidden></nav>
     </div>
     <p class="container estado" id="estado" role="status">Carregando…</p>
     <div id="pagina"></div>

@@ -874,3 +874,157 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 .lista-regras { margin: var(--sp-5) 0 0; padding-left: var(--sp-5); display: grid; gap: var(--sp-2); }
 .lista-numerada { margin: 0; padding-left: var(--sp-5); display: grid; gap: var(--sp-2); }
 .lista-numerada li::marker { color: var(--gold); font-family: var(--font-display); font-weight: 700; }
+
+/* =========================================================
+   Rankings no modelo da CBJJ
+   ========================================================= */
+
+/* ---------- Página inicial: modalidade, busca e blocos ---------- */
+.inicio-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  padding-bottom: 0;
+}
+.busca-atleta { position: relative; flex: 1 1 260px; max-width: 420px; }
+.busca-atleta .busca { max-width: none; }
+.busca-resultados {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  margin: 0;
+  padding: var(--sp-1);
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.busca-resultados li { padding: var(--sp-2) var(--sp-3); }
+.busca-resultados li:has(a) { padding: 0; }
+.busca-resultados a {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  text-decoration: none;
+}
+.busca-resultados a:hover, .busca-resultados a:focus-visible { background: var(--surface-2); }
+
+.rankings-intro { margin-bottom: var(--sp-4); }
+
+.blocos { display: grid; gap: var(--sp-3); }
+@media (min-width: 720px) { .blocos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); } }
+
+.bloco {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.bloco__cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.bloco__cab h3 { display: flex; align-items: center; gap: var(--sp-2); margin: 0; font-size: 1.25rem; }
+.bloco__qtd { color: var(--text-mute); font-size: var(--fs-sm); white-space: nowrap; }
+.bloco__lista { list-style: none; margin: 0; padding: var(--sp-1) 0; flex: 1; }
+.bloco__lista li {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-4);
+}
+.bloco__lista li + li { border-top: 1px solid var(--border); }
+.bloco__pos { font-family: var(--font-display); font-size: 1.4rem; text-align: center; color: var(--text-mute); }
+.bloco__pos.is-ouro { color: var(--gold); }
+.bloco__pos.is-prata { color: var(--silver); }
+.bloco__pos.is-bronze { color: var(--bronze); }
+.bloco__atleta { display: grid; min-width: 0; font-size: var(--fs-sm); }
+.bloco__atleta a { color: var(--text); font-weight: 600; font-size: var(--fs-md); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bloco__atleta a:hover { color: var(--gold); text-decoration: underline; }
+.bloco__atleta .text-mute { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bloco__pts { font-family: var(--font-display); font-size: 1.35rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bloco__pts small { font-family: var(--font-body); font-size: 0.75rem; color: var(--text-mute); }
+.bloco__mais {
+  display: block;
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--border);
+  color: var(--gold);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.bloco__mais::after { content: " →"; }
+.bloco__mais:hover { background: var(--surface-2); }
+
+/* ---------- Chips que são links (temporada, modalidade) ---------- */
+.chips-links { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-4); }
+.section > .chips-links { margin: 0 0 var(--sp-4); }
+.chip-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-mute);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+.chip-link:hover { color: var(--text); border-color: var(--text-mute); }
+.chip-link[aria-current="page"] { background: var(--gold); border-color: var(--gold); color: var(--bg); font-weight: 600; }
+
+/* ---------- Atleta ---------- */
+.card-link__medalhas { display: flex; gap: var(--sp-3); font-size: var(--fs-sm); }
+.tag--mini { padding: 0 var(--sp-2); font-size: 0.7rem; font-weight: 500; }
+.temporada-titulo { display: flex; align-items: center; gap: var(--sp-2); margin: var(--sp-5) 0 var(--sp-3); }
+.temporada-titulo .tag { font-family: var(--font-body); font-size: 0.75rem; }
+.conta { font-variant-numeric: tabular-nums; }
+@media (max-width: 479px) {
+  .linha-tempo__resultados li { grid-template-columns: auto 1fr; }
+  .linha-tempo__pts { grid-column: 2; }
+}
+
+/* ---------- Academias ---------- */
+.academias { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+.academia { scroll-margin-top: calc(var(--header-h) + var(--sp-3)); }
+.academia summary { flex-wrap: nowrap; }
+.academia__pos { flex: none; width: 2.5rem; text-align: center; font-family: var(--font-display); font-size: 1.6rem; color: var(--text-mute); }
+.academia__pos.is-ouro { color: var(--gold); }
+.academia__pos.is-prata { color: var(--silver); }
+.academia__pos.is-bronze { color: var(--bronze); }
+.academia__info { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.academia__nome { font-weight: 600; }
+.academia__meta { color: var(--text-mute); font-size: var(--fs-sm); }
+.academia__medalhas { display: flex; gap: var(--sp-3); font-size: var(--fs-sm); }
+.academia__pontos { white-space: nowrap; text-align: right; }
+.academia__pontos strong { font-family: var(--font-display); font-size: 1.6rem; }
+.academia__pontos small { color: var(--text-mute); }
+
+/* ---------- Regras ---------- */
+.regras-tabelas { display: grid; gap: var(--sp-5); }
+.regras-tabelas h3 { margin-bottom: var(--sp-3); }
+@media (min-width: 860px) { .regras-tabelas { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tabela__nota { display: block; color: var(--text-mute); font-family: var(--font-body); font-size: 0.75rem; font-weight: 400; white-space: normal; }
+.tabela--texto th[scope="row"] { white-space: normal; }
+.lista-exemplos { margin-top: var(--sp-4); }
+.regras-tabelas .tabela thead th { white-space: normal; }
+.regras-tabelas .tabela th, .regras-tabelas .tabela td { padding-inline: var(--sp-3); }

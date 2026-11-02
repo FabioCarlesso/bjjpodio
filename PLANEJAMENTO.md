@@ -56,7 +56,7 @@ Português do Brasil, direto, linguagem de tatame. Ex.: "Ranking geral", "Etapas
 
 ### Dentro
 
-- Ranking geral individual, com busca e filtros (faixa, categoria de peso, idade, kimono / no-gi)
+- Rankings individuais por gênero + idade + faixa (modelo CBJJ), kimono e no-gi separados, com filtro de peso e busca
 - Ranking por academia/equipe
 - Página do atleta (histórico de resultados e pontos)
 - Página do campeonato (data, cidade, pódios por categoria)
@@ -97,7 +97,8 @@ Seguindo o padrão do `bga-personal-page`: site estático, sem framework, hosped
 ```
 bjjpodio/
 ├── public/                     # ← diretório publicado pela Cloudflare
-│   ├── index.html              # Ranking geral
+│   ├── index.html              # Rankings (blocos por gênero + idade + faixa)
+│   ├── ranking.html            # Um ranking completo (/ranking?modalidade=&sexo=&idade=&faixa=)
 │   ├── atleta.html             # Detalhe do atleta (/atleta?id=slug)
 │   ├── campeonato.html         # Detalhe do campeonato (/campeonato?id=slug)
 │   ├── campeonatos.html        # Lista de etapas
@@ -141,16 +142,25 @@ bjjpodio/
 
 ### `regras.json`
 
+No modelo do [ranking de atletas da CBJJ](https://cbjj.com.br/athlete-ranking-info).
+
 ```json
 {
   "temporada": 2026,
-  "pontosPorPosicao": { "1": 9, "2": 3, "3": 1 },
-  "pesoPorNivel": { "regional": 1, "estadual": 1.5, "grande": 2 },
-  "melhoresResultados": null,
-  "desempate": ["ouros", "pratas", "bronzes", "campeonatosDisputados"],
+  "fonte": "https://cbjj.com.br/athlete-ranking-info",
+  "pontosPorPosicao": {
+    "categoria": { "1": 9, "2": 3, "3": 1 },
+    "absoluto": { "1": 13.5, "2": 4.5, "3": 1.5 }
+  },
+  "pesoPorNivel": { "regional": 1, "estadual": 2, "grande": 4 },
+  "pesoPorTemporada": [3, 2, 1],
+  "desempate": [],
   "premiacao": "A definir com o grupo"
 }
 ```
+
+- `pesoPorTemporada[0]` é a temporada atual, `[1]` a anterior, `[2]` a retrasada; mais antigas não contam
+- `desempate` vazio = pontos iguais dividem a posição (como a CBJJ). Aceita `ouros`, `pratas`, `bronzes`, `campeonatosDisputados` se o grupo quiser critério
 
 ### `categorias.json`
 
@@ -196,7 +206,7 @@ Só o **ano** de nascimento (não a data completa), por causa dos atletas menore
 
 ### `resultados.json`
 
-Só pódios (1º, 2º e 3º, podendo haver dois 3º lugares). A categoria vai **no resultado**, porque o atleta pode trocar de faixa ou de peso durante a temporada. Um resultado por linha, para facilitar a edição à mão.
+Só pódios (1º, 2º e 3º, podendo haver dois 3º lugares). A categoria vai **no resultado**, porque o atleta pode trocar de faixa ou de peso, e os pontos ficam na faixa/idade em que foram conquistados. Absoluto é `"peso": "absoluto"`. Atleta sozinho na chave também é lançado (pontua). Um resultado por linha, para facilitar a edição à mão.
 
 ```json
 [
@@ -210,48 +220,65 @@ Pontos **não são gravados**: são calculados por `ranking.js` a partir da regr
 
 ## 6. Páginas e componentes
 
-### Ranking geral (`index.html`)
-- Hero compacto: nome, slogan, temporada, "última atualização"
-- **Pódio visual** dos 3 primeiros (ouro no centro, prata e bronze nas laterais)
-- Filtros em chips: faixa, peso, idade, kimono / no-gi, temporada
-- Busca por nome
-- Tabela: posição, atleta, academia, pontos, 🥇🥈🥉, etapas disputadas
-- No mobile a tabela vira lista de cards
+### Rankings (`index.html`)
+- Hero compacto: nome, slogan, temporada, última etapa, próxima etapa
+- Kimono / No-gi (rankings separados) e busca de atleta
+- **Um bloco por ranking** (gênero + idade + faixa, como a CBJJ) com o top 5 e "Ver todos"
+
+### Ranking (`ranking.html?modalidade=&sexo=&idade=&faixa=[&peso=][&temporada=]`)
+- Seletores de gênero, idade, faixa, peso (inclui absoluto; recalcula só com aquele peso, como a CBJJ) e temporada
+- **Pódio visual** dos 3 primeiros, lista com medalhas, etapas e pontos; busca mantém a posição real
+- No mobile a tabela vira lista de cards; o link guarda o ranking para compartilhar
 
 ### Atleta (`atleta.html?id=`)
 - Cabeçalho com nome, academia, faixa
-- Totais: pontos, medalhas, posição no ranking
-- Linha do tempo de campeonatos (estilo "Conquistas" do site do Bruno)
+- Um card por ranking em que pontua (posição, medalhas, pontos); faixa anterior sinalizada
+- Resultados por temporada (com o peso dela) e por etapa, com a conta aberta: `9 × 4 × 3 = 108`
 
 ### Campeonato (`campeonato.html?id=`)
-- Data, cidade, nível/peso
-- Pódios por categoria, em acordeão
+- Data, cidade, nível (peso da etapa) e peso da temporada no ranking atual
+- Pódios por categoria (inclui absoluto), em acordeão; quadro de medalhas por academia
 
-### Academias (`academias.html`)
-- Ranking por soma de pontos dos atletas, com número de atletas e medalhas
+### Etapas (`campeonatos.html[?temporada=]`)
+- Próximas e realizadas; troca de temporada (2026, 2025, 2024)
+
+### Academias (`academias.html[?modalidade=]`)
+- Ranking pela soma dos pontos dos atletas na modalidade; acordeão com os atletas (`#academia-<id>` abre direto)
 
 ### Regras (`regras.html`)
-- Tabela de pontos, pesos, desempate e premiação, lidos de `regras.json` (uma fonte de verdade)
+- Fórmula, exemplos, tabelas de colocação, peso da etapa e peso da temporada, lidos de `regras.json`
 
 ### Componentes reutilizáveis
 Header com menu mobile, tabela/cards de ranking, chip de filtro, pódio, medalha (ouro/prata/bronze), card de campeonato, rodapé com contato por WhatsApp.
 
 ---
 
-## 7. Regras de cálculo (provisórias)
+## 7. Regras de cálculo (modelo CBJJ)
+
+Fonte: [cbjj.com.br/athlete-ranking-info](https://cbjj.com.br/athlete-ranking-info) e a página do [ranking 2026](https://cbjj.com.br/2026-athletes-ranking).
 
 ```
-pontos = pontosPorPosicao[posicao] × pesoPorNivel[nivelDoCampeonato]
-total  = soma dos pontos (ou só os N melhores, se "melhoresResultados" estiver definido)
-desempate = ouros → pratas → bronzes → nº de campeonatos
-empate total = mesma posição (1, 2, 2, 4), listados em ordem alfabética
+pontos  = colocação × peso da etapa × peso da temporada
+          colocação: categoria 9 / 3 / 1 · absoluto 13,5 / 4,5 / 1,5
+          peso da etapa: regional ×1 · estadual ×2 · grande ×4
+          peso da temporada: atual ×3 · anterior ×2 · retrasada ×1 · mais antigas não contam
+ranking = gênero + idade + faixa, numa modalidade; categoria de peso e absoluto somam juntos
+empate  = pontos iguais dividem a posição (6, 6, 8), sem critério de desempate
 ```
 
-- `melhoresResultados`: quando é um número N, só os N resultados de maior pontuação somam; as medalhas contam todas
-- "Campeonatos disputados" conta as etapas em que o atleta subiu ao pódio (só pódios são lançados)
-- Ranking por academia = soma dos totais dos atletas da academia
-- Filtros de categoria (faixa, peso, idade, modalidade, sexo) **recalculam** as posições: viram o ranking daquela categoria. A busca por nome **não**: mostra o atleta na posição real
-- Implementado em `public/assets/js/ranking.js` (funções puras), coberto por `npm test`, que também valida a integridade de `public/data/`
+| Regra da CBJJ | No circuito |
+|---|---|
+| Pesos dos campeonatos: Brasileiro ×4, Sul-Americano/BJJ Pro ×2, Open/Sul-Brasileiro ×1 | Nível da etapa: grande ×4, estadual ×2, regional ×1 |
+| Temporada começa no Campeonato Brasileiro | Temporada = ano-calendário |
+| Só ranking de kimono | Kimono e no-gi em **rankings separados** (como a IBJJF) |
+| Pontos valem só na faixa e idade em que foram conquistados | Igual (a categoria fica gravada no resultado) |
+| Sozinho na chave pontua | Igual |
+| Troca de academia não muda os pontos | Igual |
+| Filtro de peso recalcula com os pontos daquele peso | Igual |
+| — | Ranking por academia: soma dos atletas na modalidade |
+
+- "Etapas" na lista = etapas em que o atleta subiu ao pódio (só pódios são lançados)
+- Implementado em `public/assets/js/ranking.js` (funções puras), coberto por `npm test` (inclui os 3 exemplos oficiais da página da CBJJ), que também valida a integridade de `public/data/`
 
 Tudo vem de `regras.json`, então trocar a regra durante a validação é editar um arquivo.
 
@@ -298,9 +325,9 @@ Desenvolvimento local: `npm run dev` (`wrangler dev`, simula a Cloudflare com UR
 Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o que mudaria."*
 
 ### Perguntas a fechar
-1. A regra de pontos está certa? Campeonato grande vale mais?
+1. ~~A regra de pontos está certa?~~ Definido: modelo da CBJJ. Falta confirmar o nível (regional/estadual/grande) de cada etapa real
 2. Ranking só individual ou também por academia?
-3. Quais categorias aparecem (faixa, peso, idade, kimono / no-gi)?
+3. ~~Quais categorias aparecem?~~ Definido: rankings por gênero + idade + faixa, kimono e no-gi separados. Faltam as idades reais do circuito (kids, juvenil, masters)
 4. Quem lança os resultados no domingo à noite?
 5. Há premiação no fim do ano? Quem banca?
 6. Nome e logo do circuito
@@ -370,6 +397,10 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Protótipo com `X-Robots-Tag: noindex`: nomes fictícios fora do Google; sem sitemap até ter dados reais |
 | 2026-11 | `og:image` aponta para `https://bjjpodio.fabio-carlesso.workers.dev` (trocar quando houver domínio próprio; comando no README) |
 | 2026-11 | CSS/JS sempre revalidados (sem hash no nome); fontes com cache de 1 ano; imagens 1 dia |
+| 2026-11 | **Regras iguais às do ranking da CBJJ**: absoluto 13,5/4,5/1,5, peso da etapa 1/2/4, peso da temporada ×3/×2/×1 com janela de 3 temporadas, pontos presos à faixa/idade, sem desempate |
+| 2026-11 | Kimono e no-gi em rankings separados (a CBJJ só tem kimono) |
+| 2026-11 | Fim do ranking geral: página inicial com um bloco por ranking (gênero + idade + faixa) e página `/ranking` com a lista completa |
+| 2026-11 | Dados fictícios de 2024 e 2025 para mostrar o peso das temporadas, trocas de faixa e atleta sozinho na chave |
 
 ---
 

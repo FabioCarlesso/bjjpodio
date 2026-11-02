@@ -1,8 +1,12 @@
 {
   "temporada": 2026,
-  "pontosPorPosicao": { "1": 9, "2": 3, "3": 1 },
-  "pesoPorNivel": { "regional": 1, "estadual": 1.5, "grande": 2 },
-  "melhoresResultados": null,
-  "desempate": ["ouros", "pratas", "bronzes", "campeonatosDisputados"],
+  "fonte": "https://cbjj.com.br/athlete-ranking-info",
+  "pontosPorPosicao": {
+    "categoria": { "1": 9, "2": 3, "3": 1 },
+    "absoluto": { "1": 13.5, "2": 4.5, "3": 1.5 }
+  },
+  "pesoPorNivel": { "regional": 1, "estadual": 2, "grande": 4 },
+  "pesoPorTemporada": [3, 2, 1],
+  "desempate": [],
   "premiacao": "A definir com o grupo"
 }

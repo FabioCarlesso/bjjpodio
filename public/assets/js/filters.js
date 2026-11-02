@@ -1,10 +1,10 @@
-// Filtros do ranking: opções disponíveis nos dados e sincronização com a URL.
-// A URL guarda os filtros (?faixa=azul&peso=leve) para o link poder ser compartilhado.
+// Escolha do ranking (modalidade + gênero + idade + faixa, peso opcional) e sincronização com a URL.
+// A URL guarda o ranking (/ranking?modalidade=kimono&sexo=M&idade=adulto&faixa=azul) para o link poder ser compartilhado.
 
-import { temporadaDe } from './ranking.js';
+import { rankingsDisponiveis, filtrarResultados, temporadaDe } from './ranking.js';
 
-export const CAMPOS = ['temporada', 'modalidade', 'sexo', 'faixa', 'idade', 'peso', 'academia', 'q'];
-export const CAMPOS_CATEGORIA = ['modalidade', 'sexo', 'faixa', 'idade', 'peso', 'academia'];
+export const MODALIDADE_PADRAO = 'kimono';
+const CAMPOS_URL = ['modalidade', 'sexo', 'idade', 'faixa', 'peso', 'q', 'temporada'];
 
 /** Temporadas com campeonato cadastrado, da mais recente para a mais antiga. */
 export function temporadasDisponiveis(dados) {
@@ -13,59 +13,61 @@ export function temporadasDisponiveis(dados) {
   return [...anos].sort((a, b) => b - a);
 }
 
-/**
- * Opções de cada filtro que aparecem nos resultados da temporada, na ordem de categorias.json.
- * Assim o filtro não oferece combinações que dariam lista vazia logo de cara.
- */
-export function opcoesDisponiveis(dados, temporada) {
-  const campDaTemporada = new Set(dados.campeonatos.filter((c) => temporadaDe(c) === Number(temporada)).map((c) => c.id));
-  const atletaPorId = new Map(dados.atletas.map((a) => [a.id, a]));
-  const usados = { modalidade: new Set(), sexo: new Set(), faixa: new Set(), idade: new Set(), peso: new Set(), academia: new Set() };
-
-  for (const r of dados.resultados) {
-    if (!campDaTemporada.has(r.campeonatoId)) continue;
-    usados.modalidade.add(r.modalidade);
-    usados.faixa.add(r.faixa);
-    usados.idade.add(r.idade);
-    usados.peso.add(r.peso);
-    const atleta = atletaPorId.get(r.atletaId);
-    if (atleta) {
-      usados.sexo.add(atleta.sexo);
-      usados.academia.add(atleta.academiaId);
-    }
-  }
-
-  const { categorias } = dados;
-  const filtrar = (lista, set) => lista.filter((x) => set.has(x.id));
-  return {
-    modalidade: filtrar(categorias.modalidades, usados.modalidade),
-    sexo: filtrar(categorias.sexos, usados.sexo),
-    faixa: filtrar(categorias.faixas, usados.faixa),
-    idade: filtrar(categorias.idades, usados.idade),
-    peso: filtrar(categorias.pesos, usados.peso),
-    academia: filtrar(dados.academias, usados.academia).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR')),
-  };
+/** Modalidades com algum resultado valendo na temporada de referência, na ordem de categorias.json. */
+export function modalidadesDisponiveis(dados, temporada) {
+  return dados.categorias.modalidades.filter((m) => rankingsDisponiveis(dados, { temporada, modalidade: m.id }).length);
 }
 
-/** Lê os filtros da URL, descartando valores que não existem nas opções. */
-export function lerFiltroDaURL(search, { temporadas, padraoTemporada, opcoesPara }) {
-  const params = new URLSearchParams(search);
-  const temporadaURL = Number(params.get('temporada'));
-  const temporada = temporadas.includes(temporadaURL) ? temporadaURL : padraoTemporada;
-  const opcoes = opcoesPara(temporada);
+/** Pesos (incluindo absoluto) com resultado num ranking, na ordem de categorias.json. */
+export function pesosDoRanking(dados, filtro) {
+  const { peso, ...semPeso } = filtro;
+  const usados = new Set(filtrarResultados(dados.resultados, dados, semPeso).map((r) => r.peso));
+  return dados.categorias.pesos.filter((p) => usados.has(p.id));
+}
 
-  const filtro = { temporada, q: (params.get('q') ?? '').slice(0, 60) };
-  for (const campo of CAMPOS_CATEGORIA) {
-    const valor = params.get(campo) ?? '';
-    filtro[campo] = opcoes[campo].some((o) => o.id === valor) ? valor : '';
-  }
+/**
+ * Lê o ranking pedido na URL e corrige o que não existe:
+ * modalidade inválida → kimono; combinação gênero/idade/faixa inexistente → a mais parecida que exista.
+ * Retorna { temporada, modalidade, sexo, idade, faixa, peso, q } ou null se não houver ranking nenhum.
+ */
+export function lerRankingDaURL(search, dados) {
+  const params = new URLSearchParams(search);
+  const temporadas = temporadasDisponiveis(dados);
+  const pedida = Number(params.get('temporada'));
+  const temporada = temporadas.includes(pedida) ? pedida : Number(dados.regras.temporada);
+
+  const modalidades = modalidadesDisponiveis(dados, temporada).map((m) => m.id);
+  if (!modalidades.length) return null;
+  const modalidade = modalidades.includes(params.get('modalidade')) ? params.get('modalidade')
+    : modalidades.includes(MODALIDADE_PADRAO) ? MODALIDADE_PADRAO : modalidades[0];
+
+  const escolhido = escolherRanking(dados, { temporada, modalidade }, {
+    sexo: params.get('sexo') ?? '', idade: params.get('idade') ?? '', faixa: params.get('faixa') ?? '',
+  });
+  const filtro = { temporada, modalidade, ...escolhido, peso: '', q: (params.get('q') ?? '').slice(0, 60) };
+  const peso = params.get('peso') ?? '';
+  if (pesosDoRanking(dados, filtro).some((p) => p.id === peso)) filtro.peso = peso;
   return filtro;
 }
 
-/** Monta a query string; omite vazios e a temporada padrão para o link ficar curto. */
-export function filtroParaQuery(filtro, padraoTemporada) {
+/**
+ * Dentre os rankings que existem, o que mais combina com o pedido (prioridade: faixa, gênero, idade).
+ * Usado também quando o usuário troca um campo e a combinação nova não existe: o campo trocado
+ * (prioridade) vale mais que todos os outros, para a escolha da pessoa sempre ser respeitada.
+ */
+export function escolherRanking(dados, { temporada, modalidade }, pedido, prioridade = '') {
+  const lista = rankingsDisponiveis(dados, { temporada, modalidade });
+  const peso = { faixa: 4, sexo: 2, idade: 1 };
+  if (prioridade in peso) peso[prioridade] = 8;
+  const nota = (c) => ['faixa', 'sexo', 'idade'].reduce((n, campo) => n + (c[campo] === pedido[campo] ? peso[campo] : 0), 0);
+  const melhor = lista.reduce((a, b) => (nota(b) > nota(a) ? b : a), lista[0]);
+  return melhor ? { sexo: melhor.sexo, idade: melhor.idade, faixa: melhor.faixa } : { sexo: '', idade: '', faixa: '' };
+}
+
+/** Query string do ranking; omite vazios e a temporada atual para o link ficar curto. */
+export function rankingParaQuery(filtro, padraoTemporada) {
   const params = new URLSearchParams();
-  for (const campo of CAMPOS) {
+  for (const campo of CAMPOS_URL) {
     const valor = filtro[campo];
     if (!valor) continue;
     if (campo === 'temporada' && Number(valor) === Number(padraoTemporada)) continue;
@@ -73,12 +75,4 @@ export function filtroParaQuery(filtro, padraoTemporada) {
   }
   const qs = params.toString();
   return qs ? `?${qs}` : '';
-}
-
-/** Há algum filtro de categoria ativo (fora temporada e busca)? */
-export const temFiltroDeCategoria = (filtro) => CAMPOS_CATEGORIA.some((c) => filtro[c]);
-
-/** Converte o filtro da página (nomes da URL) para o formato de calcularRanking. */
-export function paraFiltroDoMotor({ q, academia, ...resto }) {
-  return { ...resto, academiaId: academia, busca: q };
 }

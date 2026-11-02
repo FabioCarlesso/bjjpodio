@@ -2,6 +2,7 @@
 // Tudo que vem dos JSON passa por esc(): os dados são editados à mão.
 
 import { carregarDados } from './data.js';
+import { temporadaDe } from './ranking.js';
 
 const fmtPontos = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -101,11 +102,62 @@ export function rotuloCategoria({ faixa, idade, peso, sexo }, ctx) {
 export const nomeNivel = (id, ctx) => ctx.niveis.get(id)?.nome ?? id;
 export const nomeModalidade = (id, ctx) => ctx.modalidades.get(id)?.nome ?? id;
 
-/** Link para o ranking geral já filtrado. */
-export function urlRanking(filtro) {
-  const params = new URLSearchParams(Object.entries(filtro).filter(([, v]) => v));
+/** Link para a página de um ranking (modalidade + gênero + idade + faixa, peso opcional). */
+export function urlRanking({ modalidade, sexo, idade, faixa, peso, temporada } = {}) {
+  const params = new URLSearchParams(Object.entries({ modalidade, sexo, idade, faixa, peso, temporada }).filter(([, v]) => v));
   const qs = params.toString();
-  return qs ? `/?${qs}` : '/';
+  return qs ? `/ranking?${qs}` : '/ranking';
+}
+
+/** Link para a academia na página de academias (abre o acordeão dela). */
+export const urlAcademia = (id) => `/academias#academia-${encodeURIComponent(id)}`;
+
+/** Nome do ranking no padrão da CBJJ: "Masculino Adulto Azul". */
+export function rotuloRanking({ sexo, idade, faixa }, ctx) {
+  return [ctx.sexos.get(sexo)?.nome, ctx.idades.get(idade)?.nome, ctx.faixas.get(faixa)?.nome].filter(Boolean).join(' ');
+}
+
+/** Etapas de uma temporada: realizadas (com resultado), última realizada e próxima sem resultado. */
+export function etapasDaTemporada(dados, temporada) {
+  const comResultado = new Set(dados.resultados.map((r) => r.campeonatoId));
+  const todas = dados.campeonatos.filter((c) => temporadaDe(c) === Number(temporada)).sort((a, b) => a.data.localeCompare(b.data));
+  const realizadas = todas.filter((c) => comResultado.has(c.id));
+  return { todas, realizadas, ultima: realizadas.at(-1), proxima: todas.find((c) => !comResultado.has(c.id)) };
+}
+
+/** Conta aberta de um resultado: "9 × 4 × 3 = 108". */
+export function contaPontos({ base, pesoEtapa, pesoTemporada, pontos }) {
+  return `${formatarPontos(base)} × ${formatarPontos(pesoEtapa)} × ${formatarPontos(pesoTemporada)} = ${formatarPontos(pontos)}`;
+}
+
+/** Pódio visual (2º, 1º, 3º) das três primeiras linhas de um ranking. */
+export function podioHTML(top, ctx) {
+  if (!top.length) return '<p class="podio__vazio">Ninguém pontuou neste ranking ainda.</p>';
+  return `<ol class="podio__lista">${top.map((l, i) => `
+    <li class="podio__item podio__item--${i + 1} ${classePosicao(l.posicao)}">
+      <a class="podio__atleta" href="${urlAtleta(l.atletaId)}">${esc(l.atleta.nome)}</a>
+      <span class="podio__academia">${faixaBadge(l.atleta.faixa, ctx)}${esc(ctx.academias.get(l.atleta.academiaId)?.nome)}</span>
+      <span class="podio__pontos">${formatarPontos(l.pontos)} <small>${rotuloPts(l.pontos)}</small></span>
+      <span class="podio__base"><span class="podio__pos">${posicaoTexto(l.posicao)}</span></span>
+    </li>`).join('')}
+  </ol>`;
+}
+
+/** Linhas do ranking (cards no celular, tabela no desktop). */
+export function linhasRankingHTML(linhas, ctx) {
+  return linhas.map((l) => `
+    <li class="linha">
+      <span class="linha__pos ${classePosicao(l.posicao)}"><span class="visually-hidden">Posição </span>${posicaoTexto(l.posicao)}</span>
+      <span class="linha__atleta">
+        <a class="linha__nome" href="${urlAtleta(l.atletaId)}">${esc(l.atleta.nome)}</a>
+        <span class="linha__academia">${faixaBadge(l.atleta.faixa, ctx)}${esc(ctx.academias.get(l.atleta.academiaId)?.nome)}</span>
+      </span>
+      <span class="linha__stats">
+        ${medalha('ouros', l.ouros)}${medalha('pratas', l.pratas)}${medalha('bronzes', l.bronzes)}
+        <span class="linha__etapas">${l.campeonatosDisputados}<span class="linha__etapas-rot"> ${l.campeonatosDisputados === 1 ? 'etapa' : 'etapas'}</span></span>
+      </span>
+      <span class="linha__pontos"><strong>${formatarPontos(l.pontos)}</strong> <small>${rotuloPts(l.pontos)}</small></span>
+    </li>`).join('');
 }
 
 /** Selo de posição (1º/2º/3º) colorido. */
@@ -119,9 +171,14 @@ export function blocoData(iso) {
   return `<span class="bloco-data" aria-hidden="true"><span class="bloco-data__dia">${d}</span><span class="bloco-data__mes">${MESES[m - 1]}</span></span>`;
 }
 
-export function faixaBadge(faixaId, ctx) {
+/**
+ * Marquinha colorida da faixa. Com decorativo: true fica só visual (aria-hidden), para usar
+ * onde o texto ao lado já diz a faixa (ex.: "Masculino Adulto Azul") e o leitor de tela não repetir.
+ */
+export function faixaBadge(faixaId, ctx, { decorativo = false } = {}) {
   const faixa = ctx.faixas.get(faixaId);
   if (!faixa) return '';
+  if (decorativo) return `<span class="faixa" data-faixa="${esc(faixaId)}" aria-hidden="true"></span>`;
   return `<span class="faixa" data-faixa="${esc(faixaId)}" title="Faixa ${esc(faixa.nome)}"><span class="visually-hidden">Faixa ${esc(faixa.nome)}</span></span>`;
 }
 

@@ -8,6 +8,7 @@ Fase atual: protótipo estático com dados fictícios para validar a ideia. Plan
 
 - HTML + CSS + JavaScript puro (ES modules), sem build
 - Dados em `public/data/*.json`; o ranking é calculado no navegador
+- Regras no modelo do [ranking de atletas da CBJJ](https://cbjj.com.br/athlete-ranking-info) (detalhes no `PLANEJAMENTO.md`, seção 7)
 - Hospedagem: Cloudflare Workers (só arquivos estáticos de `public/`, sem código de servidor)
 
 ## Rodar localmente
@@ -49,7 +50,7 @@ Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atle
 
 ## Atualizar resultados
 
-1. Adicionar os pódios em `public/data/resultados.json` (um por linha)
+1. Adicionar os pódios em `public/data/resultados.json` (um por linha). Absoluto: `"peso": "absoluto"`. Atleta sozinho na chave também entra (pontua)
 2. Atleta novo? Adicionar em `atletas.json` com um `id` único (`nome-sobrenome-sigla`)
 3. `npm test` para conferir
 4. Push na `main`: a Cloudflare publica em cerca de 1 minuto
