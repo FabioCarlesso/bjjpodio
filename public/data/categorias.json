@@ -26,6 +26,11 @@
     { "id": "super-pesado", "nome": "Super-pesado" },
     { "id": "pesadissimo",  "nome": "Pesadíssimo" }
   ],
+  "niveis": [
+    { "id": "regional", "nome": "Regional" },
+    { "id": "estadual", "nome": "Estadual" },
+    { "id": "grande",   "nome": "Grande" }
+  ],
   "modalidades": [
     { "id": "kimono", "nome": "Kimono" },
     { "id": "nogi",   "nome": "No-gi" }

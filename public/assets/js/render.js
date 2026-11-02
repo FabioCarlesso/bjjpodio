@@ -1,6 +1,8 @@
 // Helpers de renderização compartilhados entre as páginas.
 // Tudo que vem dos JSON passa por esc(): os dados são editados à mão.
 
+import { carregarDados } from './data.js';
+
 const fmtPontos = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 const MEDALHAS = [
@@ -14,6 +16,9 @@ export function esc(valor) {
 }
 
 export const formatarPontos = (n) => fmtPontos.format(n);
+
+/** "1 pt", "6 pts": abreviação no singular quando for exatamente 1. */
+export const rotuloPts = (n) => (n === 1 ? 'pt' : 'pts');
 
 /** "2026-10-04" → "4 out" (ou "4 out 2026" com ano). Sem Date para não sofrer com fuso. */
 export function formatarData(iso, { ano = false } = {}) {
@@ -36,7 +41,82 @@ export function criarContexto(dados) {
     pesos: idx(dados.categorias.pesos),
     modalidades: idx(dados.categorias.modalidades),
     sexos: idx(dados.categorias.sexos),
+    niveis: idx(dados.categorias.niveis ?? []),
+    campeonatos: idx(dados.campeonatos),
+    atletas: idx(dados.atletas),
   };
+}
+
+/**
+ * Carrega os dados e chama renderizar(dados, ctx). Cuida do aviso de carregamento/erro (#estado).
+ */
+export async function montarPagina(renderizar) {
+  const estado = document.getElementById('estado');
+  let dados;
+  try {
+    dados = await carregarDados();
+  } catch (erro) {
+    console.error(erro);
+    if (estado) {
+      estado.textContent = 'Não foi possível carregar os dados. Confira a conexão e tente de novo.';
+      estado.classList.add('is-erro');
+    }
+    return;
+  }
+  renderizar(dados, criarContexto(dados));
+  if (estado) estado.hidden = true;
+  document.body.classList.add('is-pronto');
+}
+
+export const parametro = (nome) => new URLSearchParams(location.search).get(nome);
+
+/** Temporada pedida na URL (?temporada=2025) ou a temporada atual de regras.json. */
+export function temporadaDaPagina(dados) {
+  const pedida = Number(parametro('temporada'));
+  return Number.isInteger(pedida) && pedida > 1900 ? pedida : Number(dados.regras.temporada);
+}
+
+export function definirTitulo(titulo, descricao) {
+  document.title = `${titulo} · BJJ Pódio`;
+  if (descricao) document.querySelector('meta[name="description"]')?.setAttribute('content', descricao);
+}
+
+/** Bloco padrão de "não encontrado" (id errado no link). */
+export function naoEncontrado(raiz, titulo, texto, link) {
+  definirTitulo(titulo);
+  raiz.innerHTML = `
+    <div class="container page-header">
+      <h1>${esc(titulo)}</h1>
+      <p>${esc(texto)}</p>
+    </div>
+    <div class="container section"><a href="${esc(link.href)}">${esc(link.texto)}</a></div>`;
+}
+
+/** "Azul · Adulto · Leve" (+ " · Masculino" se sexo for informado). */
+export function rotuloCategoria({ faixa, idade, peso, sexo }, ctx) {
+  return [ctx.faixas.get(faixa)?.nome, ctx.idades.get(idade)?.nome, ctx.pesos.get(peso)?.nome, sexo && ctx.sexos.get(sexo)?.nome]
+    .filter(Boolean).join(' · ');
+}
+
+export const nomeNivel = (id, ctx) => ctx.niveis.get(id)?.nome ?? id;
+export const nomeModalidade = (id, ctx) => ctx.modalidades.get(id)?.nome ?? id;
+
+/** Link para o ranking geral já filtrado. */
+export function urlRanking(filtro) {
+  const params = new URLSearchParams(Object.entries(filtro).filter(([, v]) => v));
+  const qs = params.toString();
+  return qs ? `/?${qs}` : '/';
+}
+
+/** Selo de posição (1º/2º/3º) colorido. */
+export function seloPosicao(p) {
+  return `<span class="selo-pos ${classePosicao(p)}">${posicaoTexto(p)}</span>`;
+}
+
+/** Bloco de data "22 / NOV" para cards de etapa. */
+export function blocoData(iso) {
+  const [, m, d] = iso.split('-').map(Number);
+  return `<span class="bloco-data" aria-hidden="true"><span class="bloco-data__dia">${d}</span><span class="bloco-data__mes">${MESES[m - 1]}</span></span>`;
 }
 
 export function faixaBadge(faixaId, ctx) {

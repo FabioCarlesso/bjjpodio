@@ -1,12 +1,12 @@
 // Página inicial: ranking geral com pódio, filtros de categoria e busca.
 
-import { carregarDados } from '../data.js';
 import { calcularRanking } from '../ranking.js';
 import {
-  temporadasDisponiveis, opcoesDisponiveis, lerFiltroDaURL, filtroParaQuery, temFiltroDeCategoria,
+  CAMPOS_CATEGORIA, temporadasDisponiveis, opcoesDisponiveis, lerFiltroDaURL, filtroParaQuery,
+  temFiltroDeCategoria, paraFiltroDoMotor,
 } from '../filters.js';
 import {
-  esc, formatarPontos, formatarData, plural, urlAtleta, urlCampeonato, criarContexto,
+  esc, formatarPontos, rotuloPts, formatarData, plural, urlAtleta, urlCampeonato, montarPagina,
   faixaBadge, pintarFaixas, medalha, posicaoTexto, classePosicao,
 } from '../render.js';
 
@@ -24,24 +24,16 @@ const el = {
   lista: $('#ranking'),
   cabecalho: $('#ranking-cab'),
   vazio: $('#ranking-vazio'),
-  estado: $('#estado'),
   nota: $('#ranking-nota'),
 };
 
 let dados, ctx, temporadas, padraoTemporada, filtro;
 
-iniciar();
+montarPagina(iniciar);
 
-async function iniciar() {
-  try {
-    dados = await carregarDados();
-  } catch (erro) {
-    console.error(erro);
-    el.estado.textContent = 'Não foi possível carregar o ranking. Confira a conexão e tente de novo.';
-    el.estado.classList.add('is-erro');
-    return;
-  }
-  ctx = criarContexto(dados);
+function iniciar(dadosCarregados, contexto) {
+  dados = dadosCarregados;
+  ctx = contexto;
   temporadas = temporadasDisponiveis(dados);
   padraoTemporada = Number(dados.regras.temporada);
   filtro = lerFiltroDaURL(location.search, {
@@ -55,8 +47,6 @@ async function iniciar() {
   el.nota.innerHTML = `Pontos por pódio: ${esc(pontos)}, multiplicados pelo peso da etapa. <a href="/regras">Ver regras</a>`;
   montarFiltros();
   renderizar();
-  el.estado.hidden = true;
-  document.body.classList.add('is-pronto');
 
   el.form.addEventListener('submit', (e) => e.preventDefault());
   el.campos.addEventListener('change', aoMudarFiltro);
@@ -65,7 +55,8 @@ async function iniciar() {
     renderizar();
   });
   el.limpar.addEventListener('click', () => {
-    filtro = { temporada: filtro.temporada, modalidade: '', sexo: '', faixa: '', idade: '', peso: '', q: '' };
+    filtro = { temporada: filtro.temporada, q: '' };
+    CAMPOS_CATEGORIA.forEach((campo) => (filtro[campo] = ''));
     el.busca.value = '';
     montarFiltros();
     renderizar();
@@ -75,7 +66,7 @@ async function iniciar() {
 function aoMudarFiltro(evento) {
   const form = new FormData(el.form);
   const temporadaAnterior = filtro.temporada;
-  for (const campo of ['modalidade', 'sexo', 'faixa', 'idade', 'peso']) filtro[campo] = form.get(campo) ?? '';
+  for (const campo of CAMPOS_CATEGORIA) filtro[campo] = form.get(campo) ?? '';
   if (form.has('temporada')) filtro.temporada = Number(form.get('temporada'));
 
   // Trocar de temporada muda as opções disponíveis: remonta e descarta o que não existe mais.
@@ -106,6 +97,7 @@ function montarFiltros() {
   partes.push(seletor('faixa', 'Faixa', 'Todas as faixas', opcoes.faixa));
   partes.push(seletor('idade', 'Idade', 'Todas as idades', opcoes.idade));
   partes.push(seletor('peso', 'Peso', 'Todos os pesos', opcoes.peso));
+  partes.push(seletor('academia', 'Academia', 'Todas as academias', opcoes.academia));
   partes.push('</div>');
 
   el.campos.innerHTML = partes.join('');
@@ -140,6 +132,7 @@ function seletor(nome, rotulo, rotuloTodos, lista) {
 function rotuloCategoria() {
   const nomes = [
     ['faixa', ctx.faixas], ['idade', ctx.idades], ['peso', ctx.pesos], ['sexo', ctx.sexos], ['modalidade', ctx.modalidades],
+    ['academia', ctx.academias],
   ].filter(([campo]) => filtro[campo]).map(([campo, mapa]) => mapa.get(filtro[campo])?.nome);
   return nomes.join(' · ');
 }
@@ -149,9 +142,9 @@ function rotuloCategoria() {
 function renderizar() {
   history.replaceState(null, '', location.pathname + filtroParaQuery(filtro, padraoTemporada));
 
-  const { q, ...categorias } = filtro;
-  const ranking = calcularRanking(dados, categorias);
-  const linhas = q ? calcularRanking(dados, { ...categorias, busca: q }) : ranking;
+  const { q } = filtro;
+  const ranking = calcularRanking(dados, paraFiltroDoMotor({ ...filtro, q: '' }));
+  const linhas = q ? calcularRanking(dados, paraFiltroDoMotor(filtro)) : ranking;
 
   el.temporada.textContent = filtro.temporada;
   renderizarMeta();
@@ -208,7 +201,7 @@ function renderizarPodio(top) {
     <li class="podio__item podio__item--${i + 1} ${classePosicao(l.posicao)}">
       <a class="podio__atleta" href="${urlAtleta(l.atletaId)}">${esc(l.atleta.nome)}</a>
       <span class="podio__academia">${faixaBadge(l.atleta.faixa, ctx)}${esc(ctx.academias.get(l.atleta.academiaId)?.nome)}</span>
-      <span class="podio__pontos">${formatarPontos(l.pontos)} <small>pts</small></span>
+      <span class="podio__pontos">${formatarPontos(l.pontos)} <small>${rotuloPts(l.pontos)}</small></span>
       <span class="podio__base"><span class="podio__pos">${posicaoTexto(l.posicao)}</span></span>
     </li>`).join('')}
   </ol>`;
@@ -227,7 +220,7 @@ function renderizarLista(linhas) {
         ${medalha('ouros', l.ouros)}${medalha('pratas', l.pratas)}${medalha('bronzes', l.bronzes)}
         <span class="linha__etapas">${l.campeonatosDisputados}<span class="linha__etapas-rot"> ${l.campeonatosDisputados === 1 ? 'etapa' : 'etapas'}</span></span>
       </span>
-      <span class="linha__pontos"><strong>${formatarPontos(l.pontos)}</strong> <small>pts</small></span>
+      <span class="linha__pontos"><strong>${formatarPontos(l.pontos)}</strong> <small>${rotuloPts(l.pontos)}</small></span>
     </li>`).join('');
   pintarFaixas(el.lista, ctx);
 }

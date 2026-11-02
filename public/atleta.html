@@ -19,22 +19,15 @@
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <script type="module" src="/assets/js/layout.js"></script>
+  <script type="module" src="/assets/js/paginas/atleta.js"></script>
 </head>
 <body data-page="atleta">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div id="site-header"></div>
 
   <main id="conteudo">
-    <div class="container page-header">
-      <h1>Atleta</h1>
-      <p>Histórico de resultados e pontos na temporada.</p>
-    </div>
-    <section class="container section">
-      <div class="card placeholder">
-        <strong>Página do atleta em construção</strong>
-        Nome, academia, faixa, totais de pontos e medalhas e linha do tempo de campeonatos.
-      </div>
-    </section>
+    <p class="container estado" id="estado" role="status">Carregando…</p>
+    <div id="pagina"></div>
   </main>
 
   <div id="site-footer"></div>

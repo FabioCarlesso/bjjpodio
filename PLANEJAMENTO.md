@@ -113,6 +113,7 @@ bjjpodio/
 │   │   │   └── components.css  # header, tabela, cards, chips, pódio
 │   │   ├── js/
 │   │   │   ├── layout.js       # header/rodapé compartilhados e menu mobile
+│   │   │   ├── paginas/        # um script por página (inicio, atleta, campeonato...)
 │   │   │   ├── data.js         # fetch dos JSON
 │   │   │   ├── ranking.js      # cálculo de pontos e desempate
 │   │   │   ├── filters.js      # filtros e busca
@@ -341,6 +342,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 - [x] Gerar dados fictícios (temporada 2026 em andamento)
 - [x] Implementar `ranking.js` com testes
 - [x] Construir `index.html` com pódio e filtros
+- [x] Páginas de atleta, etapa, etapas, academias e regras
 - [ ] Deploy no `pages.dev`
 - [ ] Mandar o link para o professor
 
@@ -360,3 +362,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Página inicial na ordem: hero → filtros de categoria → pódio → busca + lista (a busca não altera o pódio) |
 | 2026-11 | Filtros ficam na URL (`/?faixa=azul&peso=leve`) para compartilhar o link de uma categoria |
 | 2026-11 | Lista de ranking em `<ol>`: cards no celular, tabela a partir de 720 px |
+| 2026-11 | Academia não tem página própria: o clique abre o ranking geral filtrado (`/?academia=...`) |
+| 2026-11 | Página do atleta mostra a posição dele em cada categoria em que lutou, com link para o ranking da categoria |
+| 2026-11 | Página da etapa: pódios por categoria em acordeão (separados por modalidade) e quadro de medalhas por academia |
+| 2026-11 | Página de regras gerada a partir de `regras.json`: mudou a regra, a página muda junto |

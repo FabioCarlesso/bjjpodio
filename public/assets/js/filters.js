@@ -3,7 +3,8 @@
 
 import { temporadaDe } from './ranking.js';
 
-export const CAMPOS = ['temporada', 'modalidade', 'sexo', 'faixa', 'idade', 'peso', 'q'];
+export const CAMPOS = ['temporada', 'modalidade', 'sexo', 'faixa', 'idade', 'peso', 'academia', 'q'];
+export const CAMPOS_CATEGORIA = ['modalidade', 'sexo', 'faixa', 'idade', 'peso', 'academia'];
 
 /** Temporadas com campeonato cadastrado, da mais recente para a mais antiga. */
 export function temporadasDisponiveis(dados) {
@@ -19,7 +20,7 @@ export function temporadasDisponiveis(dados) {
 export function opcoesDisponiveis(dados, temporada) {
   const campDaTemporada = new Set(dados.campeonatos.filter((c) => temporadaDe(c) === Number(temporada)).map((c) => c.id));
   const atletaPorId = new Map(dados.atletas.map((a) => [a.id, a]));
-  const usados = { modalidade: new Set(), sexo: new Set(), faixa: new Set(), idade: new Set(), peso: new Set() };
+  const usados = { modalidade: new Set(), sexo: new Set(), faixa: new Set(), idade: new Set(), peso: new Set(), academia: new Set() };
 
   for (const r of dados.resultados) {
     if (!campDaTemporada.has(r.campeonatoId)) continue;
@@ -27,8 +28,11 @@ export function opcoesDisponiveis(dados, temporada) {
     usados.faixa.add(r.faixa);
     usados.idade.add(r.idade);
     usados.peso.add(r.peso);
-    const sexo = atletaPorId.get(r.atletaId)?.sexo;
-    if (sexo) usados.sexo.add(sexo);
+    const atleta = atletaPorId.get(r.atletaId);
+    if (atleta) {
+      usados.sexo.add(atleta.sexo);
+      usados.academia.add(atleta.academiaId);
+    }
   }
 
   const { categorias } = dados;
@@ -39,6 +43,7 @@ export function opcoesDisponiveis(dados, temporada) {
     faixa: filtrar(categorias.faixas, usados.faixa),
     idade: filtrar(categorias.idades, usados.idade),
     peso: filtrar(categorias.pesos, usados.peso),
+    academia: filtrar(dados.academias, usados.academia).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR')),
   };
 }
 
@@ -50,7 +55,7 @@ export function lerFiltroDaURL(search, { temporadas, padraoTemporada, opcoesPara
   const opcoes = opcoesPara(temporada);
 
   const filtro = { temporada, q: (params.get('q') ?? '').slice(0, 60) };
-  for (const campo of ['modalidade', 'sexo', 'faixa', 'idade', 'peso']) {
+  for (const campo of CAMPOS_CATEGORIA) {
     const valor = params.get(campo) ?? '';
     filtro[campo] = opcoes[campo].some((o) => o.id === valor) ? valor : '';
   }
@@ -71,4 +76,9 @@ export function filtroParaQuery(filtro, padraoTemporada) {
 }
 
 /** Há algum filtro de categoria ativo (fora temporada e busca)? */
-export const temFiltroDeCategoria = (filtro) => ['modalidade', 'sexo', 'faixa', 'idade', 'peso'].some((c) => filtro[c]);
+export const temFiltroDeCategoria = (filtro) => CAMPOS_CATEGORIA.some((c) => filtro[c]);
+
+/** Converte o filtro da página (nomes da URL) para o formato de calcularRanking. */
+export function paraFiltroDoMotor({ q, academia, ...resto }) {
+  return { ...resto, academiaId: academia, busca: q };
+}

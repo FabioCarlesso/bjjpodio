@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <script type="module" src="/assets/js/layout.js"></script>
+  <script type="module" src="/assets/js/paginas/regras.js"></script>
 </head>
 <body data-page="regras">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -27,14 +28,10 @@
   <main id="conteudo">
     <div class="container page-header">
       <h1>Regras</h1>
-      <p>Pontuação, peso das etapas, desempate e premiação.</p>
+      <p>Pontuação, peso das etapas, desempate e premiação. Regras provisórias, em validação com o grupo.</p>
     </div>
-    <section class="container section">
-      <div class="card placeholder">
-        <strong>Regras em construção</strong>
-        Tabela de pontos, pesos e critérios de desempate, lidos de <code>regras.json</code>.
-      </div>
-    </section>
+    <p class="container estado" id="estado" role="status">Carregando…</p>
+    <div id="pagina"></div>
   </main>
 
   <div id="site-footer"></div>

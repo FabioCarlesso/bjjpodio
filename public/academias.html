@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <script type="module" src="/assets/js/layout.js"></script>
+  <script type="module" src="/assets/js/paginas/academias.js"></script>
 </head>
 <body data-page="academias">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -27,13 +28,17 @@
   <main id="conteudo">
     <div class="container page-header">
       <h1>Academias</h1>
-      <p>Soma dos pontos dos atletas de cada equipe.</p>
+      <p id="academias-resumo">Soma dos pontos dos atletas de cada equipe.</p>
     </div>
-    <section class="container section">
-      <div class="card placeholder">
-        <strong>Ranking por academia em construção</strong>
-        Posição, academia, pontos, número de atletas e medalhas.
+    <p class="container estado" id="estado" role="status">Carregando…</p>
+    <section class="container section" aria-label="Ranking por academia">
+      <div class="ranking-cab" aria-hidden="true">
+        <span>#</span><span>Academia</span>
+        <span class="ranking-cab__medalha">Ouro</span><span class="ranking-cab__medalha">Prata</span><span class="ranking-cab__medalha">Bronze</span>
+        <span>Atletas</span><span>Pontos</span>
       </div>
+      <ol class="ranking" id="ranking-academias"></ol>
+      <p class="ranking-nota text-mute">Toque numa academia para ver os atletas dela no ranking geral. <a href="/regras">Como os pontos são calculados</a></p>
     </section>
   </main>
 

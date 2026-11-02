@@ -51,7 +51,9 @@ Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atle
 ```
 public/            site publicado
   assets/css/      tokens.css, base.css, components.css
-  assets/js/       layout.js (header/rodapé), data.js (carrega JSON), ranking.js (cálculo)
+  assets/js/       layout.js (header/rodapé), data.js (carrega JSON), ranking.js (cálculo),
+                   filters.js (filtros/URL), render.js (helpers de HTML)
+  assets/js/paginas/  um script por página
   data/            regras, categorias, campeonatos, academias, atletas, resultados
   _headers         cache e cabeçalhos de segurança
 tests/             testes do ranking e validação dos dados
