@@ -1,0 +1,38 @@
+{
+  "sexos": [
+    { "id": "M", "nome": "Masculino" },
+    { "id": "F", "nome": "Feminino" }
+  ],
+  "faixas": [
+    { "id": "branca", "nome": "Branca", "cor": "#f2f4f7" },
+    { "id": "azul",   "nome": "Azul",   "cor": "#2563eb" },
+    { "id": "roxa",   "nome": "Roxa",   "cor": "#7c3aed" },
+    { "id": "marrom", "nome": "Marrom", "cor": "#7a4a24" },
+    { "id": "preta",  "nome": "Preta",  "cor": "#000000" }
+  ],
+  "idades": [
+    { "id": "juvenil", "nome": "Juvenil" },
+    { "id": "adulto",  "nome": "Adulto" },
+    { "id": "master1", "nome": "Master 1" }
+  ],
+  "pesos": [
+    { "id": "galo",         "nome": "Galo" },
+    { "id": "pluma",        "nome": "Pluma" },
+    { "id": "pena",         "nome": "Pena" },
+    { "id": "leve",         "nome": "Leve" },
+    { "id": "medio",        "nome": "Médio" },
+    { "id": "meio-pesado",  "nome": "Meio-pesado" },
+    { "id": "pesado",       "nome": "Pesado" },
+    { "id": "super-pesado", "nome": "Super-pesado" },
+    { "id": "pesadissimo",  "nome": "Pesadíssimo" }
+  ],
+  "niveis": [
+    { "id": "regional", "nome": "Regional" },
+    { "id": "estadual", "nome": "Estadual" },
+    { "id": "grande",   "nome": "Grande" }
+  ],
+  "modalidades": [
+    { "id": "kimono", "nome": "Kimono" },
+    { "id": "nogi",   "nome": "No-gi" }
+  ]
+}

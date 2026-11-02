@@ -31,17 +31,47 @@ Cloudflare → Workers & Pages → Create → Pages → Connect to Git → `bjjp
 
 Cada push na `main` publica em `bjjpodio.pages.dev`. Outras branches ganham URL de preview.
 
+### Endereço do site
+
+A imagem de prévia de link (`og:image`) precisa de endereço completo e está como `https://bjjpodio.pages.dev`. Se o Pages der outro endereço (ex.: `bjjpodio-abc.pages.dev`) ou quando houver domínio próprio, troque em todas as páginas:
+
+```bash
+grep -rl "bjjpodio.pages.dev" public | xargs sed -i 's#https://bjjpodio.pages.dev#https://NOVO-ENDERECO#g'
+```
+
+### Fora do Google durante o protótipo
+
+`public/_headers` envia `X-Robots-Tag: noindex` para os nomes fictícios não irem parar no Google. A prévia no WhatsApp continua funcionando. Remova a linha quando os dados forem reais.
+
+## Imagens
+
+`node ferramentas/gerar-imagens.cjs` gera a imagem de prévia (`og-image.png`, 1200×630) e os ícones em `public/assets/img/`. Requer Playwright.
+
+## Testes
+
+```bash
+npm test
+```
+
+Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atleta ou etapa inexistente, posição inválida, categoria desconhecida, resultado duplicado). Rode sempre depois de editar os JSON.
+
 ## Atualizar resultados
 
-Editar os arquivos em `public/data/` e fazer push. O Pages publica em cerca de 1 minuto.
+1. Adicionar os pódios em `public/data/resultados.json` (um por linha)
+2. Atleta novo? Adicionar em `atletas.json` com um `id` único (`nome-sobrenome-sigla`)
+3. `npm test` para conferir
+4. Push na `main`: o Pages publica em cerca de 1 minuto
 
 ## Estrutura
 
 ```
 public/            site publicado
   assets/css/      tokens.css, base.css, components.css
-  assets/js/       layout.js (header/rodapé) e, em breve, data/ranking/filters/render
-  data/            regras.json e demais dados
+  assets/js/       layout.js (header/rodapé), data.js (carrega JSON), ranking.js (cálculo),
+                   filters.js (filtros/URL), render.js (helpers de HTML)
+  assets/js/paginas/  um script por página
+  data/            regras, categorias, campeonatos, academias, atletas, resultados
   _headers         cache e cabeçalhos de segurança
+tests/             testes do ranking e validação dos dados
 wrangler.toml      config do Pages
 ```

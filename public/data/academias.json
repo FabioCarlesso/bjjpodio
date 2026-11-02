@@ -1,0 +1,38 @@
+[
+  {
+    "id": "base-solida",
+    "nome": "Base Sólida Jiu-Jitsu",
+    "sigla": "BS",
+    "cidade": "Curitiba"
+  },
+  {
+    "id": "gralha-azul",
+    "nome": "Gralha Azul BJJ",
+    "sigla": "GA",
+    "cidade": "Londrina"
+  },
+  {
+    "id": "raiz-tatame",
+    "nome": "Raiz do Tatame",
+    "sigla": "RT",
+    "cidade": "Ponta Grossa"
+  },
+  {
+    "id": "lapela-jj",
+    "nome": "Lapela Jiu-Jitsu",
+    "sigla": "LJ",
+    "cidade": "Foz do Iguaçu"
+  },
+  {
+    "id": "ponte-alta",
+    "nome": "Ponte Alta Team",
+    "sigla": "PA",
+    "cidade": "Maringá"
+  },
+  {
+    "id": "nucleo-guarda",
+    "nome": "Núcleo Guarda",
+    "sigla": "NG",
+    "cidade": "Cascavel"
+  }
+]

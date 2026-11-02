@@ -11,30 +11,45 @@
   <meta property="og:site_name" content="BJJ Pódio">
   <meta property="og:title" content="Etapas · BJJ Pódio">
   <meta property="og:description" content="Todas as etapas da temporada do BJJ Pódio: datas, cidades e nível de cada campeonato.">
+  <meta property="og:image" content="https://bjjpodio.pages.dev/assets/img/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="BJJ Pódio: ranking de jiu-jitsu do Paraná. Cada luta conta.">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Inter:wght@400;500;600&display=swap">
+  <link rel="icon" href="/assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="/assets/fonts/inter-400-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/barlow-condensed-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/css/tokens.css">
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <script type="module" src="/assets/js/layout.js"></script>
+  <script type="module" src="/assets/js/paginas/campeonatos.js"></script>
+  <link rel="modulepreload" href="/assets/js/data.js">
+  <link rel="modulepreload" href="/assets/js/ranking.js">
+  <link rel="modulepreload" href="/assets/js/render.js">
+  <link rel="preload" href="/data/regras.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/categorias.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/campeonatos.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/academias.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/atletas.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/resultados.json" as="fetch" crossorigin>
 </head>
 <body data-page="campeonatos">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div id="site-header"></div>
+  <noscript><p class="container estado">O BJJ Pódio precisa do JavaScript ligado para mostrar o ranking.</p></noscript>
 
   <main id="conteudo">
     <div class="container page-header">
       <h1>Etapas</h1>
-      <p>Campeonatos que valem pontos na temporada.</p>
+      <p id="etapas-resumo">Campeonatos que valem pontos na temporada.</p>
     </div>
-    <section class="container section">
-      <div class="card placeholder">
-        <strong>Lista de etapas em construção</strong>
-        Cards com data, cidade, nível e modalidades de cada campeonato.
-      </div>
-    </section>
+    <p class="container estado" id="estado" role="status">Carregando…</p>
+    <div id="pagina"></div>
   </main>
 
   <div id="site-footer"></div>
