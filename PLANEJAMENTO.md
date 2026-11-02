@@ -72,7 +72,7 @@ Português do Brasil, direto, linguagem de tatame. Ex.: "Ranking geral", "Etapas
 
 ### Como o lançamento funciona na fase estática
 
-Enquanto não há backend, os resultados ficam em arquivos `data/*.json` no repositório. Atualizar = editar o JSON (ou um CSV convertido em script) e fazer push. Cloudflare publica sozinho em ~1 minuto. Serve para validar; para o uso de domingo à noite com vários professores, a fase 2 (Supabase) resolve.
+Enquanto não há backend, os resultados ficam em arquivos `data/*.json` no repositório. Torneios feitos no **Torneio Fácil** são importados com `npm run importar` (ver README), sem digitação. Atualizar = editar o JSON (ou um CSV convertido em script) e fazer push. Cloudflare publica sozinho em ~1 minuto. Serve para validar; para o uso de domingo à noite com vários professores, a fase 2 (Supabase) resolve.
 
 ---
 
@@ -402,6 +402,9 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Fim do ranking geral: página inicial com um bloco por ranking (gênero + idade + faixa) e página `/ranking` com a lista completa |
 | 2026-11 | Dados fictícios de 2024 e 2025 para mostrar o peso das temporadas, trocas de faixa e atleta sozinho na chave |
 | 2026-11 | `[previews]` no `wrangler.toml`: o Workers Builds roda `npx wrangler preview` nas branches de PR, e o comando exige esse bloco (vazio basta) |
+| 2026-11 | **Importador do Torneio Fácil** (`ferramentas/importar-torneiofacil.mjs`): lê os pódios pela chamada pública da página de resultados; simula por padrão, grava com `--gravar`; homônimos e dúvidas vão para revisão |
+| 2026-11 | Categorias do Torneio Fácil em `categorias.json`: idades kids (pré-mirim a infanto-juvenil), masters agrupados (1 e 2, 3 a 5, 6 e 7) e faixas kids (cinza e amarela, laranja e verde, graduado) |
+| 2026-11 | Categoria "juntos" (idades/faixas juntadas pelo organizador): pontos vão para a idade/faixa da categoria de peso do atleta no mesmo torneio; sem ela, fica de fora (revisão) |
 
 ---
 
@@ -410,4 +413,6 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 - [ ] Remover `X-Robots-Tag: noindex` de `public/_headers` e criar `sitemap.xml` + `robots.txt`
 - [ ] Com domínio próprio, atualizar o `og:image` (ver README)
 - [ ] Termo de ciência dos responsáveis pelos atletas menores de idade
+- [ ] Apagar os dados fictícios (`academias`, `atletas`, `campeonatos`, `resultados`) antes da primeira importação real
+- [ ] Confirmar com o Torneio Fácil/organizadores o uso da chamada pública de resultados (não é API documentada)
 - [ ] Prévia de link por atleta/etapa (hoje o WhatsApp mostra o título genérico da página, porque a prévia não roda JavaScript). Dá para resolver na fase 2 com código no próprio Worker

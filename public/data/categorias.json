@@ -5,15 +5,27 @@
   ],
   "faixas": [
     { "id": "branca", "nome": "Branca", "cor": "#f2f4f7" },
+    { "id": "cinza-amarela", "nome": "Cinza e amarela", "cor": "#c9b037" },
+    { "id": "laranja-verde", "nome": "Laranja e verde", "cor": "#e07b24" },
+    { "id": "graduado", "nome": "Graduado (kids)", "cor": "#6b7280" },
     { "id": "azul",   "nome": "Azul",   "cor": "#2563eb" },
     { "id": "roxa",   "nome": "Roxa",   "cor": "#7c3aed" },
     { "id": "marrom", "nome": "Marrom", "cor": "#7a4a24" },
     { "id": "preta",  "nome": "Preta",  "cor": "#000000" }
   ],
   "idades": [
-    { "id": "juvenil", "nome": "Juvenil" },
-    { "id": "adulto",  "nome": "Adulto" },
-    { "id": "master1", "nome": "Master 1" }
+    { "id": "pre-mirim",       "nome": "Pré-mirim" },
+    { "id": "mirim-a",         "nome": "Mirim A" },
+    { "id": "mirim-b",         "nome": "Mirim B" },
+    { "id": "infantil-a",      "nome": "Infantil A" },
+    { "id": "infantil-b",      "nome": "Infantil B" },
+    { "id": "infanto-juvenil", "nome": "Infanto-juvenil" },
+    { "id": "juvenil",         "nome": "Juvenil" },
+    { "id": "adulto",          "nome": "Adulto" },
+    { "id": "master1",         "nome": "Master 1" },
+    { "id": "master-1-2",      "nome": "Master 1 e 2" },
+    { "id": "master-3-4-5",    "nome": "Master 3, 4 e 5" },
+    { "id": "master-6-7",      "nome": "Master 6 e 7" }
   ],
   "pesos": [
     { "id": "galo",         "nome": "Galo" },

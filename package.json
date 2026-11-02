@@ -5,7 +5,8 @@
   "description": "Ranking anual dos campeonatos de jiu-jitsu do Paraná",
   "scripts": {
     "dev": "npx wrangler dev",
-    "test": "node --test"
+    "test": "node --test",
+    "importar": "node ferramentas/importar-torneiofacil.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -1,0 +1,43 @@
+{
+  "_leia": "Tradução do vocabulário do Torneio Fácil (bracketKey 'idade/gênero/faixa/peso') para os ids de public/data/categorias.json. Termo que não estiver aqui faz o importador parar e avisar. Idade null = categoria juntada ('juntos'): a idade e a faixa reais vêm da categoria de peso que o mesmo atleta lutou no mesmo torneio.",
+  "modalidade": { "GI": "kimono", "NOGI": "nogi" },
+  "genero": { "masculino": "M", "feminino": "F" },
+  "idade": {
+    "pre-mirim": "pre-mirim",
+    "mirim a": "mirim-a",
+    "mirim b": "mirim-b",
+    "infantil a": "infantil-a",
+    "infantil b": "infantil-b",
+    "infanto juvenil": "infanto-juvenil",
+    "juvenil": "juvenil",
+    "adulto": "adulto",
+    "master 1 e 2": "master-1-2",
+    "master 3, 4 e 5": "master-3-4-5",
+    "master 6 e 7": "master-6-7",
+    "adulto e master (juntos)": null,
+    "adulto e master azul e roxa (juntos)": null,
+    "adulto e master marrom e preta (juntos)": null
+  },
+  "faixa": {
+    "branca": "branca",
+    "cinza e amarela": "cinza-amarela",
+    "laranja e verde": "laranja-verde",
+    "graduado": "graduado",
+    "azul": "azul",
+    "roxa": "roxa",
+    "marrom": "marrom",
+    "preta": "preta"
+  },
+  "peso": {
+    "galo": "galo",
+    "pluma": "pluma",
+    "pena": "pena",
+    "leve": "leve",
+    "medio": "medio",
+    "meio pesado": "meio-pesado",
+    "pesado": "pesado",
+    "super pesado": "super-pesado",
+    "pesadissimo": "pesadissimo",
+    "absoluto": "absoluto"
+  }
+}
