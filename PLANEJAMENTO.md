@@ -84,10 +84,10 @@ Seguindo o padrão do `bga-personal-page`: site estático, sem framework, hosped
 - Dados em JSON, ranking **calculado no navegador** a partir de `resultados.json` + `regras.json`
 - Imagens em WebP (hero em 1280 px, cards em 600 px)
 - SEO e compartilhamento: `title`, `description`, Open Graph (`og:image` 1200x630, `og:locale pt_BR`), `theme-color #0b0d10`
-- Deploy: **Cloudflare Pages** (decidido), conectado ao GitHub, sem comando de build
+- Deploy: **Cloudflare Workers com arquivos estáticos** (decidido), conectado ao GitHub (Workers Builds), sem comando de build
 - Site publicado a partir de `public/`: arquivos de planejamento e README não vão para o ar
-- `_headers` do Pages para cache (JSON sem cache, assets com cache curto) e cabeçalhos de segurança
-- URLs limpas: o Pages serve `atleta.html` em `/atleta`, então os links internos já usam `/atleta?id=...`
+- `_headers` para cache (JSON sem cache, assets com cache curto) e cabeçalhos de segurança
+- URLs limpas: a Cloudflare serve `atleta.html` em `/atleta`, então os links internos já usam `/atleta?id=...`
 - Domínio próprio depois da validação (~R$ 40/ano)
 
 ---
@@ -96,7 +96,7 @@ Seguindo o padrão do `bga-personal-page`: site estático, sem framework, hosped
 
 ```
 bjjpodio/
-├── public/                     # ← diretório publicado pelo Cloudflare Pages
+├── public/                     # ← diretório publicado pela Cloudflare
 │   ├── index.html              # Ranking geral
 │   ├── atleta.html             # Detalhe do atleta (/atleta?id=slug)
 │   ├── campeonato.html         # Detalhe do campeonato (/campeonato?id=slug)
@@ -104,8 +104,8 @@ bjjpodio/
 │   ├── academias.html          # Ranking por academia
 │   ├── regras.html             # Regras e premiação
 │   ├── sobre.html              # Sobre o grupo / contato
-│   ├── 404.html                # Página não encontrada (servida pelo Pages)
-│   ├── _headers                # Cache e cabeçalhos de segurança (Pages)
+│   ├── 404.html                # Página não encontrada (not_found_handling)
+│   ├── _headers                # Cache e cabeçalhos de segurança
 │   ├── assets/
 │   │   ├── css/
 │   │   │   ├── tokens.css      # variáveis (paleta, espaçamentos)
@@ -130,7 +130,7 @@ bjjpodio/
 ├── tests/
 │   └── ranking.test.js         # testes do motor + validação dos dados (npm test)
 ├── package.json                # scripts dev e test (sem dependências)
-├── wrangler.toml               # config do Pages (pages_build_output_dir)
+├── wrangler.toml               # config do Worker ([assets] directory = public)
 ├── README.md
 └── PLANEJAMENTO.md
 ```
@@ -261,13 +261,13 @@ Tudo vem de `regras.json`, então trocar a regra durante a validação é editar
 
 | Etapa | Entregável | Esforço |
 |---|---|---|
-| 1. Setup | Repo, `wrangler.toml` (Pages), `_headers`, `tokens.css`, `base.css`, layout base | 2 h |
+| 1. Setup | Repo, `wrangler.toml`, `_headers`, `tokens.css`, `base.css`, layout base | 2 h |
 | 2. Dados fake | 3 a 4 campeonatos, 25 a 30 atletas, 6 academias, resultados | 1 h |
 | 3. Motor do ranking | `ranking.js` com pontos, pesos, desempate e testes simples | 2 h |
 | 4. Ranking geral | Pódio, filtros, busca, tabela/cards | 3 a 4 h |
 | 5. Demais páginas | Atleta, campeonato, academias, regras | 3 h |
 | 6. Polimento | Responsivo, acessibilidade, SEO, Open Graph, performance | 2 h |
-| 7. Deploy | Cloudflare Pages (`*.pages.dev`) + link para o professor | 1 h |
+| 7. Deploy | Cloudflare Workers (`*.workers.dev`) + link para o professor | 1 h |
 
 Total estimado: **2 finais de semana**.
 
@@ -275,21 +275,20 @@ Total estimado: **2 finais de semana**.
 
 ## 9. Deploy
 
-Hospedagem: **Cloudflare Pages** com integração Git.
+Hospedagem: **Cloudflare Workers com arquivos estáticos**, conectado ao GitHub (Workers Builds).
 
 1. Repositório no GitHub: `FabioCarlesso/bjjpodio`
-2. Cloudflare → Workers & Pages → Create → **Pages** → Connect to Git → selecionar `bjjpodio`
-3. Configuração do build:
-   - Production branch: `main`
-   - Framework preset: **None**
-   - Build command: *(vazio)*
-   - Build output directory: `public`
-4. Cada push na `main` publica em produção; cada branch/PR ganha uma URL de preview (`<branch>.bjjpodio.pages.dev`), útil para mostrar mudanças antes de publicar
-5. Link de validação: `bjjpodio.pages.dev`
-6. Alternativa sem Git: `npx wrangler pages deploy public --project-name bjjpodio`
-7. Após aprovação: registrar o domínio e adicionar em Pages → Custom domains
+2. Worker `bjjpodio` criado no painel e conectado ao repositório (Workers & Pages → Create → Import a repository)
+3. A cada push na `main`, a Cloudflare roda `npx wrangler deploy`, que lê o `wrangler.toml`:
+   - `[assets] directory = "./public"`: publica só a pasta do site
+   - `html_handling = "auto-trailing-slash"`: `/atleta` serve `atleta.html`
+   - `not_found_handling = "404-page"`: endereço inexistente serve `404.html`
+   - `public/_headers` é aplicado (e não fica acessível como arquivo)
+4. Link de validação: `bjjpodio.<subdomínio-da-conta>.workers.dev`
+5. Alternativa sem Git: `npx wrangler deploy`
+6. Após aprovação: registrar o domínio e adicionar no Worker → Settings → Domains & Routes
 
-Desenvolvimento local: `npx wrangler pages dev public` (simula o Pages, inclusive `_headers` e URLs limpas) ou `npx serve public`.
+Desenvolvimento local: `npm run dev` (`wrangler dev`, simula a Cloudflare com URLs limpas, 404 e `_headers`).
 
 ---
 
@@ -334,17 +333,17 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 
 - [ ] Checar o domínio `bjjpodio.com.br` no registro.br
 - [x] Criar o repositório `bjjpodio`
-- [x] Configurar Cloudflare Pages no repositório (`wrangler.toml`, `public/`, `_headers`)
+- [x] Configurar a Cloudflare no repositório (`wrangler.toml`, `public/`, `_headers`)
 - [x] Criar `tokens.css` com a paleta
 - [x] Layout base (header com menu mobile, rodapé, páginas vazias)
 - [x] Montar `regras.json` provisório
-- [ ] Conectar o repositório no painel do Cloudflare Pages
+- [x] Conectar o repositório no painel da Cloudflare (Worker `bjjpodio`)
 - [x] Gerar dados fictícios (temporada 2026 em andamento)
 - [x] Implementar `ranking.js` com testes
 - [x] Construir `index.html` com pódio e filtros
 - [x] Páginas de atleta, etapa, etapas, academias e regras
 - [x] Polimento: imagem de prévia, ícones, fontes locais, acessibilidade (axe: 0 violações), cache
-- [ ] Deploy no `pages.dev`
+- [ ] Deploy no `workers.dev` e ajustar o endereço do `og:image`
 - [ ] Mandar o link para o professor
 
 ---
@@ -353,7 +352,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 
 | Data | Decisão |
 |---|---|
-| 2026-11 | Hospedagem no **Cloudflare Pages** (em vez de Workers com static assets), conectado ao GitHub |
+| 2026-11 | ~~Hospedagem no Cloudflare Pages~~ → trocado por **Cloudflare Workers com arquivos estáticos**: o projeto foi criado como Worker no painel, e é o caminho que a Cloudflare recomenda para projetos novos. Comportamento igual (URLs limpas, 404, `_headers`) |
 | 2026-11 | Site publicado a partir de `public/`, sem etapa de build |
 | 2026-11 | Header e rodapé injetados por `layout.js` para não duplicar HTML nas 7 páginas |
 | 2026-11 | Protótipo mostra a **temporada 2026 em andamento**: 5 etapas realizadas, 2 próximas |
@@ -369,7 +368,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Página de regras gerada a partir de `regras.json`: mudou a regra, a página muda junto |
 | 2026-11 | Fontes servidas pelo próprio site (sem Google Fonts) |
 | 2026-11 | Protótipo com `X-Robots-Tag: noindex`: nomes fictícios fora do Google; sem sitemap até ter dados reais |
-| 2026-11 | `og:image` aponta para `https://bjjpodio.pages.dev` (trocar se o endereço do Pages for outro) |
+| 2026-11 | `og:image` precisa do endereço completo do site: trocar pelo endereço `workers.dev` real (comando no README) |
 | 2026-11 | CSS/JS sempre revalidados (sem hash no nome); fontes com cache de 1 ano; imagens 1 dia |
 
 ---
@@ -379,4 +378,4 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 - [ ] Remover `X-Robots-Tag: noindex` de `public/_headers` e criar `sitemap.xml` + `robots.txt`
 - [ ] Confirmar o endereço final e atualizar `og:image` (ver README)
 - [ ] Termo de ciência dos responsáveis pelos atletas menores de idade
-- [ ] Prévia de link por atleta/etapa (hoje o WhatsApp mostra o título genérico da página, porque a prévia não roda JavaScript). Dá para resolver na fase 2 com Pages Functions
+- [ ] Prévia de link por atleta/etapa (hoje o WhatsApp mostra o título genérico da página, porque a prévia não roda JavaScript). Dá para resolver na fase 2 com código no próprio Worker

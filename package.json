@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Ranking anual dos campeonatos de jiu-jitsu do Paraná",
   "scripts": {
-    "dev": "npx wrangler pages dev public",
+    "dev": "npx wrangler dev",
     "test": "node --test"
   },
   "engines": {

@@ -8,7 +8,7 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
   X-Robots-Tag: noindex
 
-# Atenção: o Pages junta (com vírgula) cabeçalhos repetidos de regras que casam com o mesmo
+# Atenção: a Cloudflare junta (com vírgula) cabeçalhos repetidos de regras que casam com o mesmo
 # caminho. Por isso não há regra genérica para /assets/*: cada pasta tem a sua.
 
 # Dados mudam a cada etapa: sempre revalidar para o ranking aparecer atualizado.
