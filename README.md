@@ -49,7 +49,27 @@ npm test
 
 Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atleta ou etapa inexistente, posição inválida, categoria desconhecida, resultado duplicado). Rode sempre depois de editar os JSON.
 
-## Atualizar resultados
+## Importar do Torneio Fácil
+
+Os pódios de um torneio do [Torneio Fácil](https://torneiofacil.com) podem ser importados direto, sem digitar:
+
+```bash
+# 1. Cadastre a etapa em public/data/campeonatos.json (id, nome, data, cidade, nível, modalidade)
+# 2. Simule (não grava nada) e confira o relatório
+npm run importar -- https://torneiofacil.com/resultados/<slug> --campeonato <id-da-etapa>
+# 3. Grave, rode os testes e faça o commit
+npm run importar -- https://torneiofacil.com/resultados/<slug> --campeonato <id-da-etapa> --gravar
+npm test
+```
+
+- Kimono e no-gi em links separados? Passe os dois: `npm run importar -- <link-gi> <link-nogi> --campeonato <id>`
+- Reimportar depois de uma correção no Torneio Fácil: acrescente `--substituir`
+- Atletas são reconhecidos pelo nome (sem acento/maiúscula). Novos são criados; homônimos e casos duvidosos ficam de fora e aparecem no relatório para lançar à mão
+- Categorias "juntos" (ex.: adulto e master azul e roxa): idade e faixa reais vêm da categoria de peso do atleta no mesmo torneio
+- Termo novo do Torneio Fácil (idade, faixa, peso): o importador para e pede para incluir em `ferramentas/torneiofacil-mapa.json`
+- Usa a mesma chamada pública da página `torneiofacil.com/resultados/<slug>` (não oficial: pode mudar sem aviso)
+
+## Atualizar resultados à mão
 
 1. Adicionar os pódios em `public/data/resultados.json` (um por linha). Absoluto: `"peso": "absoluto"`. Atleta sozinho na chave também entra (pontua)
 2. Atleta novo? Adicionar em `atletas.json` com um `id` único (`nome-sobrenome-sigla`)
@@ -66,6 +86,7 @@ public/            site publicado
   assets/js/paginas/  um script por página
   data/            regras, categorias, campeonatos, academias, atletas, resultados
   _headers         cache e cabeçalhos de segurança
-tests/             testes do ranking e validação dos dados
+tests/             testes do ranking, do importador e validação dos dados
+ferramentas/       importador do Torneio Fácil e gerador de imagens
 wrangler.toml      config do Worker (pasta public/, URLs limpas, 404)
 ```
