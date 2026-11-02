@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "npx wrangler dev",
     "test": "node --test",
-    "importar": "node ferramentas/importar-torneiofacil.mjs"
+    "importar": "node ferramentas/importar-torneiofacil.mjs",
+    "sincronizar": "node ferramentas/sincronizar-torneiofacil.mjs"
   },
   "engines": {
     "node": ">=20"

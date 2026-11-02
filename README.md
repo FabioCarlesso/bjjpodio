@@ -2,7 +2,7 @@
 
 Ranking anual dos campeonatos de jiu-jitsu organizados pelo grupo de professores do Paraná. **Cada luta conta.**
 
-Fase atual: protótipo estático com dados fictícios para validar a ideia. Planejamento completo em [PLANEJAMENTO.md](PLANEJAMENTO.md).
+Fase atual: protótipo estático em validação, sem dados lançados (os resultados entram pelo importador do Torneio Fácil). Planejamento completo em [PLANEJAMENTO.md](PLANEJAMENTO.md).
 
 ## Stack
 
@@ -35,7 +35,7 @@ grep -rl "bjjpodio.fabio-carlesso.workers.dev" public | xargs sed -i 's#https://
 
 ### Fora do Google durante o protótipo
 
-`public/_headers` envia `X-Robots-Tag: noindex` para os nomes fictícios não irem parar no Google. A prévia no WhatsApp continua funcionando. Remova a linha quando os dados forem reais.
+`public/_headers` envia `X-Robots-Tag: noindex` para o protótipo não ir parar no Google. A prévia no WhatsApp continua funcionando. Remova a linha quando o ranking for divulgado oficialmente.
 
 ## Imagens
 
@@ -48,6 +48,21 @@ npm test
 ```
 
 Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atleta ou etapa inexistente, posição inválida, categoria desconhecida, resultado duplicado). Rode sempre depois de editar os JSON.
+
+## Sincronizar com o Torneio Fácil
+
+O ranking contempla **todos os torneios do Paraná cadastrados no [Torneio Fácil](https://torneiofacil.com)**. Um comando busca a lista pública deles, cria/atualiza as etapas e importa os pódios publicados:
+
+```bash
+npm run sincronizar             # simula e mostra o relatório
+npm run sincronizar -- --gravar # grava em public/data
+npm test                        # confere e faça o commit
+```
+
+- Rode sempre que quiser (ex.: toda segunda): não duplica nada e só traz o que mudou
+- Gi e no-gi do mesmo evento viram uma etapa. Etapa nova entra como **regional (×1)**; ajuste `nivel`, `nome` ou `cidade` em `campeonatos.json` à vontade, a sincronização não sobrescreve
+- Só pontuam categorias com **pódio publicado** no Torneio Fácil. A página **Etapas** mostra quais torneios são contemplados e a situação de cada um
+- Configuração em `ferramentas/torneiofacil-etapas.json`: estado, nível padrão, links a ignorar e correções de grafia de cidade
 
 ## Importar do Torneio Fácil
 
@@ -87,6 +102,6 @@ public/            site publicado
   data/            regras, categorias, campeonatos, academias, atletas, resultados
   _headers         cache e cabeçalhos de segurança
 tests/             testes do ranking, do importador e validação dos dados
-ferramentas/       importador do Torneio Fácil e gerador de imagens
+ferramentas/       sincronização e importador do Torneio Fácil, gerador de imagens
 wrangler.toml      config do Worker (pasta public/, URLs limpas, 404)
 ```

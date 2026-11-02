@@ -8,6 +8,14 @@ import {
   rotuloRanking, nomeModalidade, etapasDaTemporada, faixaBadge, pintarFaixas, posicaoTexto, classePosicao,
 } from '../render.js';
 
+/** Texto curto de quais torneios entram, para a página inicial. */
+function textoContemplados(dados) {
+  const doTF = dados.campeonatos.filter((c) => c.torneioFacil);
+  if (!doTF.length) return '';
+  const comRes = new Set(dados.resultados.map((r) => r.campeonatoId));
+  return `Contempla os torneios do Paraná cadastrados no Torneio Fácil: ${doTF.length} eventos, ${doTF.filter((c) => comRes.has(c.id)).length} com pódios publicados. <a href="/campeonatos">Ver torneios contemplados</a>`;
+}
+
 const TOP = 5;
 const $ = (sel) => document.querySelector(sel);
 
@@ -24,6 +32,8 @@ montarPagina((dados, ctx) => {
   configurarBusca();
 
   const { pontosPorPosicao, pesoPorNivel, pesoPorTemporada } = dados.regras;
+  const contemplados = textoContemplados(dados);
+  if (contemplados) { $('#contemplados').innerHTML = contemplados; $('#contemplados').hidden = false; }
   $('#ranking-nota').innerHTML = `Pontos = colocação (ouro ${formatarPontos(pontosPorPosicao.categoria[1])}, absoluto ${formatarPontos(pontosPorPosicao.absoluto[1])})
     × peso da etapa (até ×${formatarPontos(Math.max(...Object.values(pesoPorNivel)))})
     × peso da temporada (atual ×${formatarPontos(pesoPorTemporada[0])}). <a href="/regras">Ver regras</a>`;
@@ -67,15 +77,16 @@ montarPagina((dados, ctx) => {
           </ol>
           <a class="bloco__mais" href="${urlRanking({ modalidade, ...cat })}">Ver todos<span class="visually-hidden">: ${esc(nome)}</span></a>
         </section>`;
-    }).join('') || '<p class="text-mute">Nenhum resultado nesta modalidade ainda.</p>';
+    }).join('') || `<div class="card placeholder"><strong>Nenhum resultado lançado ainda</strong>Os rankings aparecem aqui depois da primeira etapa${dados.resultados.length ? ` de ${esc(nomeModalidade(modalidade, ctx).toLowerCase())}` : ''}.</div>`;
     pintarFaixas($('#blocos'), ctx);
   }
 
   function renderizarMeta() {
-    const { todas, realizadas, ultima, proxima } = etapasDaTemporada(dados, temporada);
+    const { todas, realizadas, comResultado, ultima, proxima } = etapasDaTemporada(dados, temporada);
+    if (!todas.length) return; // nenhuma etapa cadastrada: o hero fica só com nome e slogan
     const itens = [];
     if (ultima) itens.push(`<div><dt>Atualizado após</dt><dd><a href="${urlCampeonato(ultima.id)}">${esc(ultima.nome)}</a> · ${formatarData(ultima.data)}</dd></div>`);
-    itens.push(`<div><dt>Etapas</dt><dd>${realizadas.length} de ${todas.length} realizadas</dd></div>`);
+    itens.push(`<div><dt>Etapas ${temporada}</dt><dd><a href="/campeonatos">${realizadas.length} realizadas, ${comResultado.length} com resultados</a></dd></div>`);
     if (proxima) itens.push(`<div><dt>Próxima etapa</dt><dd><a href="${urlCampeonato(proxima.id)}">${esc(proxima.nome)}</a> · ${formatarData(proxima.data)} · ${esc(proxima.cidade)}</dd></div>`);
     $('#hero-meta').innerHTML = itens.join('');
     $('#hero-meta').hidden = false;

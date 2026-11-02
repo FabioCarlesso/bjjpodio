@@ -81,10 +81,12 @@ export function converterResultados(resposta, mapa) {
   const podios = [];
   const desconhecidos = new Set();
   let pendentes = 0;
+  let encerradas = 0;
   const modalidadePadrao = modalidadeDoTorneio(resposta.tournament);
 
   for (const r of resposta.results ?? []) {
     if (r.status !== 'FINISHED' || !r.podium) { pendentes += 1; continue; }
+    encerradas += 1;
     const k = lerBracketKey(r.bracketKey);
     if (!k) { desconhecidos.add(`categoria fora do padrão: ${r.bracketKey}`); continue; }
 
@@ -111,7 +113,7 @@ export function converterResultados(resposta, mapa) {
       });
     }
   }
-  return { podios, pendentes, desconhecidos };
+  return { podios, pendentes, encerradas, total: (resposta.results ?? []).length, desconhecidos };
 }
 
 /**
@@ -164,7 +166,7 @@ export function ligarAtletas(podios, dados, campeonato) {
     const texto = nome || 'Academia não informada';
     const existente = academiaPorChave.get(chave(texto));
     if (existente) return existente;
-    const nova = { id: novoId(slug(texto)), nome: texto, sigla: sigla(texto), cidade: '', apelidos: [] };
+    const nova = { id: novoId(slug(texto)), nome: texto, sigla: sigla(texto), cidade: '', apelidos: [texto] };
     academias.push(nova); academiasNovas.push(nova); academiaPorChave.set(chave(texto), nova);
     if (!nome) avisos.push('Pódio sem academia: atletas ligados a "Academia não informada"');
     return nova;
@@ -230,4 +232,143 @@ export function ligarAtletas(podios, dados, campeonato) {
     }
   }
   return { resultados: [...unicos.values()], atletasNovos, academiasNovas, atualizacoes, avisos, ignorados };
+}
+
+/**
+ * Importa os pódios de uma etapa (uma ou mais respostas da API: ex. gi e no-gi) para os dados.
+ * Os resultados que a etapa já tinha são substituídos (o Torneio Fácil é a fonte).
+ * ajustarModalidade: em vez de recusar, acrescenta à etapa a modalidade que o torneio tiver.
+ * Retorna { dados, desconhecidos, foraDaEtapa, encerradas, total, pendentes, podios, semCategoria,
+ *           substituidos, resultados, atletasNovos, academiasNovas, atualizacoes, avisos, ignorados }.
+ * Se houver termos desconhecidos ou modalidade fora da etapa, dados volta sem mudança.
+ */
+export function importarEtapa(dados, campeonato, respostas, mapa, { ajustarModalidade = false } = {}) {
+  let podios = [];
+  let pendentes = 0, encerradas = 0, total = 0;
+  const desconhecidos = new Set();
+  for (const resposta of respostas) {
+    const c = converterResultados(resposta, mapa);
+    podios = podios.concat(c.podios);
+    pendentes += c.pendentes; encerradas += c.encerradas; total += c.total;
+    c.desconhecidos.forEach((d) => desconhecidos.add(d));
+  }
+  const vazio = { dados, desconhecidos, foraDaEtapa: [], encerradas, total, pendentes, podios, semCategoria: [], substituidos: 0,
+    resultados: [], atletasNovos: [], academiasNovas: [], atualizacoes: new Map(), avisos: [], ignorados: [] };
+  if (desconhecidos.size) return vazio;
+
+  const modalidades = [...new Set(podios.map((p) => p.modalidade))];
+  const foraDaEtapa = modalidades.filter((m) => !campeonato.modalidade.includes(m));
+  let etapa = campeonato;
+  if (foraDaEtapa.length) {
+    if (!ajustarModalidade) return { ...vazio, foraDaEtapa };
+    etapa = { ...campeonato, modalidade: [...campeonato.modalidade, ...foraDaEtapa] };
+  }
+
+  const { resolvidos, semCategoria } = resolverJuntos(podios);
+  const substituidos = dados.resultados.filter((r) => r.campeonatoId === etapa.id).length;
+  const base = { ...dados, resultados: dados.resultados.filter((r) => r.campeonatoId !== etapa.id) };
+  const lig = ligarAtletas(resolvidos, base, etapa);
+  const novo = {
+    ...base,
+    campeonatos: dados.campeonatos.map((c) => (c.id === etapa.id ? etapa : c)),
+    academias: [...dados.academias, ...lig.academiasNovas],
+    atletas: [...dados.atletas.map((a) => (lig.atualizacoes.has(a.id) ? { ...a, ...lig.atualizacoes.get(a.id) } : a)), ...lig.atletasNovos],
+    resultados: [...base.resultados, ...lig.resultados],
+  };
+  return { ...lig, dados: novo, desconhecidos, foraDaEtapa: [], encerradas, total, pendentes, podios, semCategoria, substituidos, etapa };
+}
+
+// ---------- sincronização: lista pública de torneios → etapas ----------
+
+const SEM_MODALIDADE = /\b(no[\s-]?gi|gi)\b/gi;
+
+/** Torneio é do estado? Pelo local ("… - PR") ou pelo link ("…-pr-gi"). */
+export function ehDoEstado(torneio, uf) {
+  const u = uf.toLowerCase();
+  const local = chave(torneio.location);
+  return new RegExp(`(^| )${u}$`).test(local) || new RegExp(`-${u}(-(no-?)?gi)?(-old)?$`, 'i').test(torneio.slug ?? '')
+    || new RegExp(`-${u}-(no-?)?gi(-|$)`, 'i').test(torneio.slug ?? '');
+}
+
+/** Nome do evento sem GI/NO-GI, em nome próprio ("XIX COPA PARANÁ DE JIU-JITSU GI" → "XIX Copa Paraná de Jiu-Jitsu"). */
+export function nomeDoEvento(nome) {
+  const limpo = String(nome ?? '').replace(SEM_MODALIDADE, ' ').replace(/\s+-\s*$/, '').replace(/\s+/g, ' ').trim();
+  return nomeProprio(limpo.toUpperCase())
+    .replace(/\bJiu Jitsu\b/gi, 'Jiu-Jitsu')
+    // algarismos romanos (II, XIX) em maiúsculas; fronteira por letra Unicode, para "Candói" não virar "CandóI"
+    .replace(/(?<!\p{L})[ivxlc]{1,5}(?!\p{L})/giu, (m) => m.toUpperCase())
+    .replace(/\b(Bjj|Ct|Sti|Sinppfpr)\b/g, (m) => m.toUpperCase());
+}
+
+/**
+ * Cidade do torneio. O campo "location" vem livre (às vezes com ginásio, às vezes com o estado errado),
+ * então usa a lista de cidades conhecidas (tiradas dos próprios locais "CIDADE - UF"):
+ * 1) cidade conhecida citada no local; 2) cidade conhecida no link ("…-foz-do-iguacu-pr-gi"); 3) o local como veio.
+ */
+export function cidadeDoTorneio(torneio, cidadesConhecidas, uf = 'PR') {
+  const local = chave(torneio.location);
+  const slugT = String(torneio.slug ?? '').toLowerCase();
+  const ordem = [...cidadesConhecidas].sort((a, b) => b.length - a.length);
+  if (new RegExp(`(^| )${uf.toLowerCase()}$`).test(local)) {
+    const c = ordem.find((cid) => new RegExp(`(^| )${chave(cid)}( |$)`).test(local));
+    if (c) return c;
+  }
+  const c2 = ordem.find((cid) => slugT.includes(`-${slug(cid)}-${uf.toLowerCase()}`));
+  if (c2) return c2;
+  // pedaço do local que aparece no link antes da UF ("Maringá - AM" com link "…-maringa-pr-gi" → "Maringá")
+  const pedacos = String(torneio.location ?? '').split(/\s+-\s+|,|-/).map((x) => x.trim()).filter(Boolean);
+  const doLink = pedacos.find((x) => slug(x) && slugT.includes(`-${slug(x)}-${uf.toLowerCase()}`));
+  if (doLink) return nomeProprio(doLink.toUpperCase());
+  // último trecho do local antes da UF ("Ginásio X - Francisco Beltão - PR" → "Francisco Beltão")
+  const semUF = String(torneio.location ?? '').replace(new RegExp(`\\s*[-–/,]?\\s*${uf}\\s*$`, 'i'), '').trim();
+  return nomeProprio(semUF.split(/\s+-\s+|,/).pop().trim().toUpperCase());
+}
+
+/** Cidades "limpas" dos locais no formato "CIDADE - UF" (até 4 palavras, sem nome de ginásio). */
+export function cidadesDosLocais(torneios, uf = 'PR') {
+  const cidades = new Set();
+  for (const t of torneios) {
+    const m = String(t.location ?? '').replace(/\s+/g, ' ').trim().match(new RegExp(`^([^,\\-–/]+?)\\s*[-–/,]?\\s*${uf}\\.?$`, 'i'));
+    if (!m) continue;
+    const nome = m[1].trim();
+    if (nome.split(' ').length > 4 || /gin[aá]sio|parque|clube|centro|est[aá]dio/i.test(nome)) continue;
+    cidades.add(nomeProprio(nome.toUpperCase()));
+  }
+  // grafias com e sem acento ("Cáscavel"/"Cascavel"): fica a grafia que aparece em mais locais
+  const porChave = new Map();
+  for (const c of cidades) {
+    const k = chave(c);
+    const n = torneios.filter((t) => String(t.location ?? '').toLowerCase().includes(c.toLowerCase())).length;
+    const atual = porChave.get(k);
+    if (!atual || n > atual.n) porChave.set(k, { nome: c, n });
+  }
+  return [...porChave.values()].map((x) => x.nome);
+}
+
+/**
+ * Agrupa os torneios do estado em eventos (gi e no-gi do mesmo evento = uma etapa).
+ * Retorna [{ id, nome, data, cidade, slugs, modalidade }] ordenado por data.
+ */
+export function agruparTorneios(torneios, { uf = 'PR', ignorar = [], cidades: correcoes = {} } = {}) {
+  const doEstado = torneios.filter((t) => ehDoEstado(t, uf) && !ignorar.includes(t.slug));
+  const corrigir = new Map(Object.entries(correcoes).map(([de, para]) => [chave(de), para]));
+  const cidades = cidadesDosLocais(doEstado, uf).map((c) => corrigir.get(chave(c)) ?? c);
+  const cidadeFinal = (t) => { const c = cidadeDoTorneio(t, cidades, uf); return corrigir.get(chave(c)) ?? c; };
+  const grupos = new Map();
+  for (const t of doEstado) {
+    const data = String(t.date ?? '').slice(0, 10);
+    const nome = nomeDoEvento(t.name);
+    const k = `${chave(nome)}|${data}`;
+    if (!grupos.has(k)) grupos.set(k, { nome, data, cidade: cidadeFinal(t), torneios: [] });
+    grupos.get(k).torneios.push(t);
+  }
+  return [...grupos.values()].sort((a, b) => a.data.localeCompare(b.data) || a.nome.localeCompare(b.nome)).map((g) => {
+    const ano = g.data.slice(0, 4);
+    const modalidade = [...new Set(g.torneios.map((t) => (/(^|-)no-?gi(-|$)/i.test(t.slug) ? 'nogi' : 'kimono')))].sort();
+    return {
+      id: slug(g.nome) + (g.nome.includes(ano) ? '' : `-${ano}`),
+      nome: g.nome, data: g.data, cidade: g.cidade,
+      slugs: g.torneios.map((t) => t.slug).sort(), modalidade,
+    };
+  });
 }

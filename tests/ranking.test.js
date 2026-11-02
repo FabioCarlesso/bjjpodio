@@ -209,10 +209,9 @@ test('public/data: dados íntegros', () => {
   assert.deepEqual(validarDados(reais), []);
 });
 
-test('public/data: cada ranking disponível calcula sem erros', () => {
+test('public/data: cada ranking disponível calcula sem erros (vale também com os dados vazios)', () => {
   for (const modalidade of ['kimono', 'nogi']) {
     const lista = rankingsDisponiveis(reais, { modalidade });
-    assert.ok(lista.length > 0, modalidade);
     for (const cat of lista) {
       const r = calcularRanking(reais, { modalidade, ...cat });
       assert.equal(r.length, cat.atletas);
@@ -220,5 +219,13 @@ test('public/data: cada ranking disponível calcula sem erros', () => {
       r.forEach((l) => assert.ok(Number.isFinite(l.pontos) && l.pontos > 0 && l.atleta));
     }
   }
-  assert.ok(calcularRankingAcademias(reais, { modalidade: 'kimono' }).length > 0);
+  assert.ok(Array.isArray(calcularRankingAcademias(reais, { modalidade: 'kimono' })));
+});
+
+test('sem nenhum dado lançado, nada quebra', () => {
+  const vazio = { ...base, campeonatos: [], academias: [], atletas: [], resultados: [] };
+  assert.deepEqual(validarDados(vazio), []);
+  assert.deepEqual(rankingsDisponiveis(vazio, { modalidade: 'kimono' }), []);
+  assert.deepEqual(calcularRanking(vazio, AZUL_M), []);
+  assert.deepEqual(calcularRankingAcademias(vazio, { modalidade: 'kimono' }), []);
 });

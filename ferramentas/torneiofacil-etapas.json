@@ -1,0 +1,15 @@
+{
+  "_leia": "Configuração da sincronização com o Torneio Fácil (npm run sincronizar). estado: UF dos torneios que viram etapas. nivelPadrao: nível das etapas novas (o grupo ajusta depois em campeonatos.json; a sincronização não sobrescreve). ignorar: links (slugs) duplicados ou que não devem entrar. cidades: correção de grafia das cidades vindas do campo 'local' do Torneio Fácil.",
+  "estado": "PR",
+  "nivelPadrao": "regional",
+  "ignorar": [
+    "copa-in-the-guard-de-jiu-jitsu-cascavel-pr-gi-OLD"
+  ],
+  "cidades": {
+    "Cáscavel": "Cascavel",
+    "Francisco Beltão": "Francisco Beltrão",
+    "Cambe": "Cambé",
+    "Curiuva": "Curiúva",
+    "Nova Olimpia": "Nova Olímpia"
+  }
+}

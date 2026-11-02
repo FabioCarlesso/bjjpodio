@@ -1,38 +1,164 @@
 [
   {
-    "id": "base-solida",
-    "nome": "Base Sólida Jiu-Jitsu",
-    "sigla": "BS",
-    "cidade": "Curitiba"
+    "id": "daniel-costa-jiu-jitsu-brasileiro",
+    "nome": "Daniel Costa Jiu Jitsu Brasileiro",
+    "sigla": "DCJJ",
+    "cidade": "",
+    "apelidos": [
+      "Daniel Costa Jiu Jitsu Brasileiro"
+    ]
   },
   {
-    "id": "gralha-azul",
-    "nome": "Gralha Azul BJJ",
-    "sigla": "GA",
-    "cidade": "Londrina"
+    "id": "academia-nao-informada",
+    "nome": "Academia não informada",
+    "sigla": "ANI",
+    "cidade": "",
+    "apelidos": [
+      "Academia não informada"
+    ]
   },
   {
-    "id": "raiz-tatame",
-    "nome": "Raiz do Tatame",
-    "sigla": "RT",
-    "cidade": "Ponta Grossa"
+    "id": "toca-do-javali-ct-oda-jiu-jitsu",
+    "nome": "Toca do Javali / CT Oda Jiu Jitsu",
+    "sigla": "TJCO",
+    "cidade": "",
+    "apelidos": [
+      "Toca do Javali / CT Oda Jiu Jitsu"
+    ]
   },
   {
-    "id": "lapela-jj",
-    "nome": "Lapela Jiu-Jitsu",
-    "sigla": "LJ",
-    "cidade": "Foz do Iguaçu"
+    "id": "gracie-barra",
+    "nome": "Gracie Barra",
+    "sigla": "GB",
+    "cidade": "",
+    "apelidos": [
+      "Gracie Barra"
+    ]
   },
   {
-    "id": "ponte-alta",
-    "nome": "Ponte Alta Team",
-    "sigla": "PA",
-    "cidade": "Maringá"
+    "id": "siam-jiu-jitsu-assis-chateaubriand",
+    "nome": "Siam Jiu Jitsu - Assis Chateaubriand",
+    "sigla": "SJJA",
+    "cidade": "",
+    "apelidos": [
+      "Siam Jiu Jitsu - Assis Chateaubriand"
+    ]
   },
   {
-    "id": "nucleo-guarda",
-    "nome": "Núcleo Guarda",
-    "sigla": "NG",
-    "cidade": "Cascavel"
+    "id": "araujo-jiu-jitsu",
+    "nome": "Araújo Jiu Jitsu",
+    "sigla": "AJJ",
+    "cidade": "",
+    "apelidos": [
+      "Araújo Jiu Jitsu"
+    ]
+  },
+  {
+    "id": "raiz-fight",
+    "nome": "Raiz Fight",
+    "sigla": "RF",
+    "cidade": "",
+    "apelidos": [
+      "Raiz Fight"
+    ]
+  },
+  {
+    "id": "alexandre-azevedo",
+    "nome": "Alexandre Azevedo",
+    "sigla": "AA",
+    "cidade": "",
+    "apelidos": [
+      "Alexandre Azevedo"
+    ]
+  },
+  {
+    "id": "hattori-jiu-jitsu",
+    "nome": "Hattori Jiu Jitsu",
+    "sigla": "HJJ",
+    "cidade": "",
+    "apelidos": [
+      "Hattori Jiu Jitsu"
+    ]
+  },
+  {
+    "id": "ct-tucano-fight-alfa-jiu-jitsu",
+    "nome": "CT Tucano Fight Alfa Jiu Jitsu",
+    "sigla": "CTFA",
+    "cidade": "",
+    "apelidos": [
+      "CT Tucano Fight Alfa Jiu Jitsu"
+    ]
+  },
+  {
+    "id": "aprove-jiu-jitsu",
+    "nome": "Aprove Jiu Jitsu",
+    "sigla": "AJJ",
+    "cidade": "",
+    "apelidos": [
+      "Aprove Jiu Jitsu"
+    ]
+  },
+  {
+    "id": "dutra-jiu-jitsu",
+    "nome": "Dutra Jiu Jitsu",
+    "sigla": "DJJ",
+    "cidade": "",
+    "apelidos": [
+      "Dutra Jiu Jitsu"
+    ]
+  },
+  {
+    "id": "checkmat",
+    "nome": "Checkmat",
+    "sigla": "C",
+    "cidade": "",
+    "apelidos": [
+      "Checkmat"
+    ]
+  },
+  {
+    "id": "la-treta-jiu-jitsu",
+    "nome": "LA Treta Jiu Jitsu",
+    "sigla": "LTJJ",
+    "cidade": "",
+    "apelidos": [
+      "LA Treta Jiu Jitsu"
+    ]
+  },
+  {
+    "id": "osmar-bravo-b9-jiu-jitsu",
+    "nome": "Osmar Bravo / B9 Jiu Jitsu",
+    "sigla": "OBBJ",
+    "cidade": "",
+    "apelidos": [
+      "Osmar Bravo / B9 Jiu Jitsu"
+    ]
+  },
+  {
+    "id": "af-jiujitsu",
+    "nome": "AF Jiujitsu",
+    "sigla": "AJ",
+    "cidade": "",
+    "apelidos": [
+      "AF Jiujitsu"
+    ]
+  },
+  {
+    "id": "cicero-costha",
+    "nome": "Cicero Costha",
+    "sigla": "CC",
+    "cidade": "",
+    "apelidos": [
+      "Cicero Costha"
+    ]
+  },
+  {
+    "id": "up-winners-jiu-jitsu",
+    "nome": "UP Winners Jiu Jitsu",
+    "sigla": "UWJJ",
+    "cidade": "",
+    "apelidos": [
+      "UP Winners Jiu Jitsu"
+    ]
   }
 ]

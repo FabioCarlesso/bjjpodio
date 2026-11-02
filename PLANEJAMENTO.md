@@ -62,7 +62,7 @@ Português do Brasil, direto, linguagem de tatame. Ex.: "Ranking geral", "Etapas
 - Página do campeonato (data, cidade, pódios por categoria)
 - Página de regras (pontuação, desempate, premiação)
 - Responsivo mobile-first (a galera vai abrir pelo celular, via WhatsApp)
-- Dados **fictícios** em JSON, só para demonstração
+- Dados em JSON, vindos do Torneio Fácil (`npm run sincronizar`): todos os torneios do Paraná cadastrados lá, com os pódios publicados
 
 ### Fora (fase 2)
 
@@ -322,7 +322,7 @@ Desenvolvimento local: `npm run dev` (`wrangler dev`, simula a Cloudflare com UR
 ## 10. Validação da ideia
 
 ### O que mostrar ao professor
-Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o que mudaria."*
+Link do protótipo, de preferência já com a primeira etapa real importada do Torneio Fácil, e o pedido: *"Abre no celular e me diz o que mudaria."*
 
 ### Perguntas a fechar
 1. ~~A regra de pontos está certa?~~ Definido: modelo da CBJJ. Falta confirmar o nível (regional/estadual/grande) de cada etapa real
@@ -405,6 +405,10 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | **Importador do Torneio Fácil** (`ferramentas/importar-torneiofacil.mjs`): lê os pódios pela chamada pública da página de resultados; simula por padrão, grava com `--gravar`; homônimos e dúvidas vão para revisão |
 | 2026-11 | Categorias do Torneio Fácil em `categorias.json`: idades kids (pré-mirim a infanto-juvenil), masters agrupados (1 e 2, 3 a 5, 6 e 7) e faixas kids (cinza e amarela, laranja e verde, graduado) |
 | 2026-11 | Categoria "juntos" (idades/faixas juntadas pelo organizador): pontos vão para a idade/faixa da categoria de peso do atleta no mesmo torneio; sem ela, fica de fora (revisão) |
+| 2026-11 | **Dados fictícios apagados**: `academias`, `atletas`, `campeonatos` e `resultados` vazios, à espera da primeira etapa real. Páginas mostram avisos de "ainda sem resultados". Para rever a demonstração, basta consultar o histórico do git |
+| 2026-11 | **Torneios contemplados = todos os do Paraná no Torneio Fácil** (`npm run sincronizar`): 81 eventos de 2023 a 2026; gi e no-gi do mesmo evento viram uma etapa; etapas novas entram como regional ×1 e edições manuais em `campeonatos.json` não são sobrescritas |
+| 2026-11 | Só 3 desses eventos têm pódios publicados no Torneio Fácil (50 colocações); os demais aparecem em **Etapas** como "sem pódios publicados" e passam a contar quando o organizador lançar os pódios lá |
+| 2026-11 | Etapa passada/próxima decidida pela data (antes: "sem resultado" = próxima) |
 
 ---
 
@@ -413,6 +417,9 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 - [ ] Remover `X-Robots-Tag: noindex` de `public/_headers` e criar `sitemap.xml` + `robots.txt`
 - [ ] Com domínio próprio, atualizar o `og:image` (ver README)
 - [ ] Termo de ciência dos responsáveis pelos atletas menores de idade
-- [ ] Apagar os dados fictícios (`academias`, `atletas`, `campeonatos`, `resultados`) antes da primeira importação real
+- [x] Apagar os dados fictícios (`academias`, `atletas`, `campeonatos`, `resultados`) antes da primeira importação real
 - [ ] Confirmar com o Torneio Fácil/organizadores o uso da chamada pública de resultados (não é API documentada)
+- [ ] Definir o nível (regional/estadual/grande) de cada etapa em `campeonatos.json` (hoje todas entram como regional)
+- [ ] Pedir aos organizadores que publiquem os pódios no Torneio Fácil (só 3 de 77 etapas realizadas têm pódio lá)
+- [ ] Decidir se eventos internos de academia e só-kids entram no ranking (ex.: "Campeonato Interno CT Team Kombat"); para tirar, incluir o link em `ignorar` de `ferramentas/torneiofacil-etapas.json`
 - [ ] Prévia de link por atleta/etapa (hoje o WhatsApp mostra o título genérico da página, porque a prévia não roda JavaScript). Dá para resolver na fase 2 com código no próprio Worker

@@ -17,7 +17,11 @@ montarPagina((dados, ctx) => {
   const temporadas = temporadasDisponiveis(dados);
   let filtro = lerRankingDaURL(location.search, dados);
   if (!filtro) {
-    $('#pagina-ranking').innerHTML = '<div class="container section"><div class="card placeholder"><strong>Nenhum ranking ainda</strong>Os rankings aparecem depois da primeira etapa.</div></div>';
+    definirTitulo('Rankings');
+    $('#pagina-ranking').innerHTML = `
+      <header class="container page-header perfil"><h1>Rankings</h1></header>
+      <div class="container section"><div class="card placeholder"><strong>Nenhum ranking ainda</strong>Os rankings aparecem depois da primeira etapa lançada. <a href="/campeonatos">Ver etapas</a></div></div>`;
+    document.body.classList.add('is-pronto');
     return;
   }
 
