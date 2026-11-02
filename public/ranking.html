@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ranking · BJJ Pódio</title>
+  <meta name="description" content="Ranking anual dos campeonatos de jiu-jitsu do Paraná. Pontos, pódios e quem lidera a temporada.">
+  <meta name="theme-color" content="#0b0d10">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="BJJ Pódio">
+  <meta property="og:title" content="Ranking · BJJ Pódio">
+  <meta property="og:description" content="Ranking anual dos campeonatos de jiu-jitsu do Paraná. Pontos, pódios e quem lidera a temporada.">
+  <meta property="og:image" content="https://bjjpodio.fabio-carlesso.workers.dev/assets/img/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="BJJ Pódio: ranking de jiu-jitsu do Paraná. Cada luta conta.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="/assets/fonts/inter-400-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/barlow-condensed-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <script type="module" src="/assets/js/layout.js"></script>
+  <script type="module" src="/assets/js/paginas/ranking.js"></script>
+  <link rel="modulepreload" href="/assets/js/data.js">
+  <link rel="modulepreload" href="/assets/js/ranking.js">
+  <link rel="modulepreload" href="/assets/js/filters.js">
+  <link rel="modulepreload" href="/assets/js/render.js">
+  <link rel="preload" href="/data/regras.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/categorias.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/campeonatos.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/academias.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/atletas.json" as="fetch" crossorigin>
+  <link rel="preload" href="/data/resultados.json" as="fetch" crossorigin>
+</head>
+<body data-page="rankings">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="site-header"></div>
+  <noscript><p class="container estado">O BJJ Pódio precisa do JavaScript ligado para mostrar o ranking.</p></noscript>
+
+  <main id="conteudo">
+    <div id="pagina-ranking">
+      <header class="container page-header perfil">
+        <nav class="trilha" aria-label="Você está em"><a href="/">Rankings</a> <span aria-hidden="true">/</span> <span id="trilha-atual">Ranking</span></nav>
+        <h1 id="titulo-ranking">Ranking</h1>
+        <p class="perfil__sub" id="ranking-sub"></p>
+      </header>
+
+      <form class="container filtros" id="filtros" aria-label="Escolher ranking">
+        <div id="filtros-campos" class="filtros__campos"></div>
+      </form>
+
+      <p class="container estado" id="estado" role="status">Carregando ranking…</p>
+
+      <section class="container section podio" aria-labelledby="titulo-podio">
+        <h2 id="titulo-podio">Quem lidera <span class="titulo-categoria" id="podio-peso" hidden></span></h2>
+        <div id="podio"></div>
+      </section>
+
+      <section class="container section" aria-labelledby="titulo-lista">
+        <div class="ranking-topo">
+          <div>
+            <h2 id="titulo-lista">Classificação</h2>
+            <p class="text-mute ranking-resumo" id="ranking-resumo" aria-live="polite"></p>
+          </div>
+          <label class="busca">
+            <span class="visually-hidden">Buscar atleta neste ranking</span>
+            <svg class="busca__icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="busca" form="filtros" placeholder="Buscar atleta" autocomplete="off" enterkeyhint="search">
+          </label>
+        </div>
+
+        <div class="ranking-cab" id="ranking-cab" aria-hidden="true">
+          <span>#</span><span>Atleta</span>
+          <span class="ranking-cab__medalha">Ouro</span><span class="ranking-cab__medalha">Prata</span><span class="ranking-cab__medalha">Bronze</span>
+          <span>Etapas</span><span>Pontos</span>
+        </div>
+        <ol class="ranking" id="ranking" aria-labelledby="titulo-lista"></ol>
+        <div class="ranking-vazio card placeholder" id="ranking-vazio" hidden>
+          <strong>Nenhum atleta encontrado</strong>
+          <p></p>
+        </div>
+        <p class="ranking-nota text-mute">Pontos = colocação × peso da etapa × peso da temporada, somando as três últimas temporadas. <a href="/regras">Ver regras</a></p>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>

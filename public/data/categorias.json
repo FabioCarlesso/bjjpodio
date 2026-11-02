@@ -24,7 +24,8 @@
     { "id": "meio-pesado",  "nome": "Meio-pesado" },
     { "id": "pesado",       "nome": "Pesado" },
     { "id": "super-pesado", "nome": "Super-pesado" },
-    { "id": "pesadissimo",  "nome": "Pesadíssimo" }
+    { "id": "pesadissimo",  "nome": "Pesadíssimo" },
+    { "id": "absoluto",     "nome": "Absoluto" }
   ],
   "niveis": [
     { "id": "regional", "nome": "Regional" },

@@ -31,6 +31,7 @@
   <link rel="modulepreload" href="/assets/js/data.js">
   <link rel="modulepreload" href="/assets/js/ranking.js">
   <link rel="modulepreload" href="/assets/js/render.js">
+  <link rel="modulepreload" href="/assets/js/filters.js">
   <link rel="preload" href="/data/regras.json" as="fetch" crossorigin>
   <link rel="preload" href="/data/categorias.json" as="fetch" crossorigin>
   <link rel="preload" href="/data/campeonatos.json" as="fetch" crossorigin>
@@ -50,13 +51,9 @@
     </div>
     <p class="container estado" id="estado" role="status">Carregando…</p>
     <section class="container section" aria-label="Ranking por academia">
-      <div class="ranking-cab" aria-hidden="true">
-        <span>#</span><span>Academia</span>
-        <span class="ranking-cab__medalha">Ouro</span><span class="ranking-cab__medalha">Prata</span><span class="ranking-cab__medalha">Bronze</span>
-        <span>Atletas</span><span>Pontos</span>
-      </div>
-      <ol class="ranking" id="ranking-academias"></ol>
-      <p class="ranking-nota text-mute">Toque numa academia para ver os atletas dela no ranking geral. <a href="/regras">Como os pontos são calculados</a></p>
+      <nav class="chips-links" id="modalidades" aria-label="Modalidade" hidden></nav>
+      <ol class="academias" id="ranking-academias"></ol>
+      <p class="ranking-nota text-mute">Soma dos pontos de todos os atletas da academia, em todos os rankings da modalidade. Toque numa academia para ver os atletas. <a href="/regras">Como os pontos são calculados</a></p>
     </section>
   </main>
 

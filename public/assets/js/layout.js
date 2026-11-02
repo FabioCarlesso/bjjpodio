@@ -2,7 +2,7 @@
 // Cada página marca <body data-page="..."> para destacar o item ativo no menu.
 
 const NAV = [
-  { page: 'ranking',     href: '/',            label: 'Ranking geral' },
+  { page: 'rankings',    href: '/',            label: 'Rankings' },
   { page: 'campeonatos', href: '/campeonatos', label: 'Etapas' },
   { page: 'academias',   href: '/academias',   label: 'Academias' },
   { page: 'regras',      href: '/regras',      label: 'Regras' },

@@ -1,4 +1,11 @@
 [
+  {"id":"copa-abertura-2024","nome":"Copa Abertura","data":"2024-03-17","cidade":"Curitiba","nivel":"estadual","modalidade":["kimono"]},
+  {"id":"open-norte-2024","nome":"Open Norte","data":"2024-06-16","cidade":"Londrina","nivel":"regional","modalidade":["kimono","nogi"]},
+  {"id":"grande-premio-parana-2024","nome":"Grande Prêmio Paraná","data":"2024-10-06","cidade":"Curitiba","nivel":"grande","modalidade":["kimono","nogi"]},
+  {"id":"copa-abertura-2025","nome":"Copa Abertura","data":"2025-03-16","cidade":"Curitiba","nivel":"estadual","modalidade":["kimono"]},
+  {"id":"desafio-campos-gerais-2025","nome":"Desafio Campos Gerais","data":"2025-05-18","cidade":"Ponta Grossa","nivel":"regional","modalidade":["kimono"]},
+  {"id":"copa-tres-fronteiras-2025","nome":"Copa Três Fronteiras","data":"2025-08-17","cidade":"Foz do Iguaçu","nivel":"regional","modalidade":["kimono","nogi"]},
+  {"id":"grande-premio-parana-2025","nome":"Grande Prêmio Paraná","data":"2025-10-05","cidade":"Curitiba","nivel":"grande","modalidade":["kimono","nogi"]},
   {"id":"copa-abertura-2026","nome":"Copa Abertura","data":"2026-03-15","cidade":"Curitiba","nivel":"estadual","modalidade":["kimono"]},
   {"id":"open-pe-vermelho-2026","nome":"Open Pé Vermelho","data":"2026-05-10","cidade":"Londrina","nivel":"regional","modalidade":["kimono","nogi"]},
   {"id":"desafio-campos-gerais-2026","nome":"Desafio Campos Gerais","data":"2026-06-21","cidade":"Ponta Grossa","nivel":"regional","modalidade":["kimono"]},

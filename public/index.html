@@ -39,7 +39,7 @@
   <link rel="preload" href="/data/atletas.json" as="fetch" crossorigin>
   <link rel="preload" href="/data/resultados.json" as="fetch" crossorigin>
 </head>
-<body data-page="ranking">
+<body data-page="rankings">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div id="site-header"></div>
   <noscript><p class="container estado">O BJJ Pódio precisa do JavaScript ligado para mostrar o ranking.</p></noscript>
@@ -54,42 +54,24 @@
       </div>
     </section>
 
-    <form class="container section filtros" id="filtros" aria-label="Filtrar ranking por categoria">
-      <div id="filtros-campos" class="filtros__campos"></div>
-      <button type="button" class="botao-link" id="limpar-filtros" hidden>Limpar filtros</button>
-    </form>
-
-    <p class="container estado" id="estado" role="status">Carregando ranking…</p>
-
-    <section class="container section podio" aria-labelledby="titulo-podio">
-      <h2 id="titulo-podio">Quem lidera <span class="titulo-categoria" id="podio-categoria"></span></h2>
-      <div id="podio"></div>
-    </section>
-
-    <section class="container section" aria-labelledby="titulo-ranking">
-      <div class="ranking-topo">
-        <div>
-          <h2 id="titulo-ranking">Ranking</h2>
-          <p class="text-mute ranking-resumo" id="ranking-resumo" aria-live="polite"></p>
-        </div>
+    <div class="container section inicio-topo">
+      <fieldset class="chips" id="modalidades"></fieldset>
+      <div class="busca-atleta">
         <label class="busca">
           <span class="visually-hidden">Buscar atleta pelo nome</span>
           <svg class="busca__icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="busca" form="filtros" placeholder="Buscar atleta" autocomplete="off" enterkeyhint="search">
+          <input type="search" id="busca" placeholder="Buscar atleta" autocomplete="off" enterkeyhint="search" aria-controls="busca-resultados">
         </label>
+        <ul class="busca-resultados" id="busca-resultados" aria-live="polite" hidden></ul>
       </div>
+    </div>
 
-      <div class="ranking-cab" id="ranking-cab" aria-hidden="true">
-        <span>#</span><span>Atleta</span>
-        <span class="ranking-cab__medalha">Ouro</span><span class="ranking-cab__medalha">Prata</span><span class="ranking-cab__medalha">Bronze</span>
-        <span>Etapas</span><span>Pontos</span>
-      </div>
-      <ol class="ranking" id="ranking" aria-labelledby="titulo-ranking"></ol>
-      <div class="ranking-vazio card placeholder" id="ranking-vazio" hidden>
-        <strong>Nenhum atleta encontrado</strong>
-        <p></p>
-      </div>
+    <p class="container estado" id="estado" role="status">Carregando rankings…</p>
 
+    <section class="container section" aria-labelledby="titulo-rankings">
+      <h2 id="titulo-rankings">Rankings <span class="titulo-categoria" id="titulo-modalidade"></span></h2>
+      <p class="text-mute rankings-intro">Como na CBJJ, cada ranking é de um gênero, idade e faixa. Categoria de peso e absoluto somam juntos.</p>
+      <div class="blocos" id="blocos"></div>
       <p class="ranking-nota text-mute" id="ranking-nota"></p>
     </section>
   </main>
