@@ -38,7 +38,7 @@ function renderFooter() {
     <footer class="site-footer">
       <div class="container site-footer__inner">
         <p>BJJ Pódio · Cada luta conta.</p>
-        <p>Protótipo com dados fictícios.</p>
+        <p>Protótipo em validação com os professores.</p>
       </div>
     </footer>`;
 }

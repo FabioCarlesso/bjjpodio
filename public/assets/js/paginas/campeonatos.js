@@ -22,9 +22,10 @@ montarPagina((dados, ctx) => {
 
   const atual = Number(dados.regras.temporada);
   const pesoT = pesoDaTemporada(temporada, atual, dados.regras);
-  document.getElementById('etapas-resumo').textContent =
-    `Temporada ${temporada}: ${plural(daTemporada.length, 'etapa', 'etapas')}, ${realizadas.length} ${realizadas.length === 1 ? 'realizada' : 'realizadas'}. `
-    + (pesoT ? `No ranking ${atual}, os pontos desta temporada valem ×${formatarPontos(pesoT)}.` : `Os pontos desta temporada não contam mais no ranking ${atual}.`);
+  document.getElementById('etapas-resumo').textContent = !daTemporada.length
+    ? `Temporada ${temporada}: nenhuma etapa cadastrada ainda.`
+    : `Temporada ${temporada}: ${plural(daTemporada.length, 'etapa', 'etapas')}, ${realizadas.length} ${realizadas.length === 1 ? 'realizada' : 'realizadas'}. `
+      + (pesoT ? `No ranking ${atual}, os pontos desta temporada valem ×${formatarPontos(pesoT)}.` : `Os pontos desta temporada não contam mais no ranking ${atual}.`);
 
   const temporadas = temporadasDisponiveis(dados);
   const nav = document.getElementById('temporadas');
@@ -41,7 +42,7 @@ montarPagina((dados, ctx) => {
 
   raiz.innerHTML = daTemporada.length
     ? secao('Próximas', proximas) + secao('Realizadas', realizadas)
-    : `<section class="container section"><div class="card placeholder"><strong>Nenhuma etapa cadastrada</strong>A agenda da temporada ${temporada} ainda não foi divulgada.</div></section>`;
+    : `<section class="container section"><div class="card placeholder"><strong>Nenhuma etapa cadastrada</strong>As etapas da temporada ${temporada} aparecem aqui quando forem cadastradas.</div></section>`;
 
   function card(c) {
     const res = resultadosPorEtapa.get(c.id);

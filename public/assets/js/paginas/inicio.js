@@ -67,12 +67,13 @@ montarPagina((dados, ctx) => {
           </ol>
           <a class="bloco__mais" href="${urlRanking({ modalidade, ...cat })}">Ver todos<span class="visually-hidden">: ${esc(nome)}</span></a>
         </section>`;
-    }).join('') || '<p class="text-mute">Nenhum resultado nesta modalidade ainda.</p>';
+    }).join('') || `<div class="card placeholder"><strong>Nenhum resultado lançado ainda</strong>Os rankings aparecem aqui depois da primeira etapa${dados.resultados.length ? ` de ${esc(nomeModalidade(modalidade, ctx).toLowerCase())}` : ''}.</div>`;
     pintarFaixas($('#blocos'), ctx);
   }
 
   function renderizarMeta() {
     const { todas, realizadas, ultima, proxima } = etapasDaTemporada(dados, temporada);
+    if (!todas.length) return; // nenhuma etapa cadastrada: o hero fica só com nome e slogan
     const itens = [];
     if (ultima) itens.push(`<div><dt>Atualizado após</dt><dd><a href="${urlCampeonato(ultima.id)}">${esc(ultima.nome)}</a> · ${formatarData(ultima.data)}</dd></div>`);
     itens.push(`<div><dt>Etapas</dt><dd>${realizadas.length} de ${todas.length} realizadas</dd></div>`);

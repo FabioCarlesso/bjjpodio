@@ -22,7 +22,6 @@
     { "id": "infanto-juvenil", "nome": "Infanto-juvenil" },
     { "id": "juvenil",         "nome": "Juvenil" },
     { "id": "adulto",          "nome": "Adulto" },
-    { "id": "master1",         "nome": "Master 1" },
     { "id": "master-1-2",      "nome": "Master 1 e 2" },
     { "id": "master-3-4-5",    "nome": "Master 3, 4 e 5" },
     { "id": "master-6-7",      "nome": "Master 6 e 7" }

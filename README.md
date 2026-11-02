@@ -2,7 +2,7 @@
 
 Ranking anual dos campeonatos de jiu-jitsu organizados pelo grupo de professores do Paraná. **Cada luta conta.**
 
-Fase atual: protótipo estático com dados fictícios para validar a ideia. Planejamento completo em [PLANEJAMENTO.md](PLANEJAMENTO.md).
+Fase atual: protótipo estático em validação, sem dados lançados (os resultados entram pelo importador do Torneio Fácil). Planejamento completo em [PLANEJAMENTO.md](PLANEJAMENTO.md).
 
 ## Stack
 
@@ -35,7 +35,7 @@ grep -rl "bjjpodio.fabio-carlesso.workers.dev" public | xargs sed -i 's#https://
 
 ### Fora do Google durante o protótipo
 
-`public/_headers` envia `X-Robots-Tag: noindex` para os nomes fictícios não irem parar no Google. A prévia no WhatsApp continua funcionando. Remova a linha quando os dados forem reais.
+`public/_headers` envia `X-Robots-Tag: noindex` para o protótipo não ir parar no Google. A prévia no WhatsApp continua funcionando. Remova a linha quando o ranking for divulgado oficialmente.
 
 ## Imagens
 

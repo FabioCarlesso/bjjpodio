@@ -15,8 +15,14 @@ montarPagina((dados, ctx) => {
   const modalidade = modalidades.some((m) => m.id === pedida) ? pedida : MODALIDADE_PADRAO;
   const ranking = calcularRankingAcademias(dados, { temporada, modalidade });
 
-  document.getElementById('academias-resumo').textContent =
-    `${plural(ranking.length, 'academia pontuando', 'academias pontuando')} no ${nomeModalidade(modalidade, ctx).toLowerCase()}, temporada ${temporada}.`;
+  document.getElementById('academias-resumo').textContent = ranking.length
+    ? `${plural(ranking.length, 'academia pontuando', 'academias pontuando')} no ${nomeModalidade(modalidade, ctx).toLowerCase()}, temporada ${temporada}.`
+    : 'Soma dos pontos dos atletas de cada equipe.';
+  if (!ranking.length) {
+    document.getElementById('ranking-academias').outerHTML = '<div class="card placeholder"><strong>Nenhuma academia pontuou ainda</strong>O ranking das academias aparece depois da primeira etapa lançada.</div>';
+    document.querySelector('.ranking-nota').hidden = true;
+    return;
+  }
 
   const nav = document.getElementById('modalidades');
   if (modalidades.length > 1) {
