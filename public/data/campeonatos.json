@@ -1,0 +1,9 @@
+[
+  {"id":"copa-abertura-2026","nome":"Copa Abertura","data":"2026-03-15","cidade":"Curitiba","nivel":"estadual","modalidade":["kimono"]},
+  {"id":"open-pe-vermelho-2026","nome":"Open Pé Vermelho","data":"2026-05-10","cidade":"Londrina","nivel":"regional","modalidade":["kimono","nogi"]},
+  {"id":"desafio-campos-gerais-2026","nome":"Desafio Campos Gerais","data":"2026-06-21","cidade":"Ponta Grossa","nivel":"regional","modalidade":["kimono"]},
+  {"id":"copa-tres-fronteiras-2026","nome":"Copa Três Fronteiras","data":"2026-08-16","cidade":"Foz do Iguaçu","nivel":"regional","modalidade":["kimono","nogi"]},
+  {"id":"grande-premio-parana-2026","nome":"Grande Prêmio Paraná","data":"2026-10-04","cidade":"Curitiba","nivel":"grande","modalidade":["kimono","nogi"]},
+  {"id":"copa-oeste-2026","nome":"Copa Oeste","data":"2026-11-22","cidade":"Cascavel","nivel":"regional","modalidade":["kimono"]},
+  {"id":"final-temporada-2026","nome":"Final da Temporada","data":"2026-12-13","cidade":"Maringá","nivel":"estadual","modalidade":["kimono","nogi"]}
+]

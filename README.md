@@ -31,17 +31,29 @@ Cloudflare → Workers & Pages → Create → Pages → Connect to Git → `bjjp
 
 Cada push na `main` publica em `bjjpodio.pages.dev`. Outras branches ganham URL de preview.
 
+## Testes
+
+```bash
+npm test
+```
+
+Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atleta ou etapa inexistente, posição inválida, categoria desconhecida, resultado duplicado). Rode sempre depois de editar os JSON.
+
 ## Atualizar resultados
 
-Editar os arquivos em `public/data/` e fazer push. O Pages publica em cerca de 1 minuto.
+1. Adicionar os pódios em `public/data/resultados.json` (um por linha)
+2. Atleta novo? Adicionar em `atletas.json` com um `id` único (`nome-sobrenome-sigla`)
+3. `npm test` para conferir
+4. Push na `main`: o Pages publica em cerca de 1 minuto
 
 ## Estrutura
 
 ```
 public/            site publicado
   assets/css/      tokens.css, base.css, components.css
-  assets/js/       layout.js (header/rodapé) e, em breve, data/ranking/filters/render
-  data/            regras.json e demais dados
+  assets/js/       layout.js (header/rodapé), data.js (carrega JSON), ranking.js (cálculo)
+  data/            regras, categorias, campeonatos, academias, atletas, resultados
   _headers         cache e cabeçalhos de segurança
+tests/             testes do ranking e validação dos dados
 wrangler.toml      config do Pages
 ```

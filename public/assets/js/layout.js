@@ -9,9 +9,6 @@ const NAV = [
   { page: 'sobre',       href: '/sobre',       label: 'Sobre' },
 ];
 
-// Contato do grupo (trocar pelo número real, formato internacional sem símbolos).
-const WHATSAPP = '';
-
 function renderHeader(current) {
   const items = NAV.map(({ page, href, label }) => {
     const aria = page === current ? ' aria-current="page"' : '';
@@ -37,14 +34,10 @@ function renderHeader(current) {
 }
 
 function renderFooter() {
-  const contato = WHATSAPP
-    ? `<a href="https://wa.me/${WHATSAPP}" rel="noopener">Fale com a gente no WhatsApp</a>`
-    : '<span>Contato em breve</span>';
   return `
     <footer class="site-footer">
       <div class="container site-footer__inner">
         <p>BJJ Pódio · Cada luta conta.</p>
-        <p>${contato}</p>
         <p>Protótipo com dados fictícios.</p>
       </div>
     </footer>`;

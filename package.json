@@ -1,0 +1,13 @@
+{
+  "name": "bjjpodio",
+  "private": true,
+  "type": "module",
+  "description": "Ranking anual dos campeonatos de jiu-jitsu do Paraná",
+  "scripts": {
+    "dev": "npx wrangler pages dev public",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
