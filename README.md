@@ -47,6 +47,8 @@ grep -rl "bjjpodio.fabio-carlesso.workers.dev" public | xargs sed -i 's#https://
 npm test
 ```
 
+No GitHub, o workflow **Testes** (`.github/workflows/testes.yml`) roda isso sozinho em todo PR e em todo push na `main`, junto com a simulação do deploy na Cloudflare (`wrangler deploy --dry-run`). O resultado aparece como check no PR.
+
 Roda os testes do motor do ranking e **valida os dados** de `public/data/` (atleta ou etapa inexistente, posição inválida, categoria desconhecida, resultado duplicado). Rode sempre depois de editar os JSON.
 
 ## Sincronizar com o Torneio Fácil

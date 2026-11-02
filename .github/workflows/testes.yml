@@ -1,0 +1,34 @@
+# Roda em todo PR e em todo push na main:
+#   1. npm test: motor do ranking, importador do Torneio Fácil e integridade de public/data
+#   2. simulação do deploy na Cloudflare (pega erro de configuração do wrangler.toml antes do merge)
+# O projeto não tem dependências: não há npm install.
+name: Testes
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Testes do ranking, do importador e dos dados
+        run: npm test
+
+      - name: Simulação do deploy na Cloudflare
+        run: npx --yes wrangler@4.156.2 deploy --dry-run
