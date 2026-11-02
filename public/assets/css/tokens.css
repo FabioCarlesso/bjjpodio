@@ -1,0 +1,47 @@
+/* Tokens de design do BJJ Pódio: paleta, tipografia, espaçamentos. */
+:root {
+  /* Paleta */
+  --bg:        #0b0d10;  /* fundo */
+  --surface:   #14181d;  /* cards, tabelas */
+  --surface-2: #1c2128;  /* hover, linhas alternadas */
+  --border:    #2a313a;
+  --text:      #f2f4f7;
+  --text-mute: #9aa4b2;
+
+  --gold:      #f5b301;  /* cor principal / CTA / 1º lugar */
+  --silver:    #c0c6cf;  /* 2º lugar */
+  --bronze:    #cd7f32;  /* 3º lugar */
+  --red:       #e63946;  /* destaques pontuais, alertas */
+
+  /* Tipografia */
+  --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --fs-sm:  0.875rem;
+  --fs-md:  1rem;
+  --fs-lg:  1.125rem;
+  --fs-xl:  1.5rem;
+  --fs-2xl: clamp(2rem, 6vw, 3rem);
+  --fs-3xl: clamp(2.5rem, 9vw, 4.5rem);
+
+  /* Espaçamentos (escala de 4px) */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+
+  /* Forma e layout */
+  --radius:    10px;
+  --radius-sm: 6px;
+  --container: 1100px;
+  --gutter:    1rem;
+  --header-h:  60px;
+
+  --transition: 150ms ease;
+
+  color-scheme: dark;
+}

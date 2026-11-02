@@ -1,0 +1,173 @@
+/* Componentes compartilhados: header, menu, rodapé, hero, cards. */
+
+/* ---------- Header ---------- */
+#site-header { min-height: var(--header-h); } /* reserva espaço antes do JS */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(11, 13, 16, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  height: var(--header-h);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.brand img { width: 32px; height: 32px; }
+.brand span { color: var(--gold); }
+
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.nav-toggle__bar,
+.nav-toggle__bar::before,
+.nav-toggle__bar::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text);
+  position: relative;
+  transition: transform var(--transition), background var(--transition);
+}
+.nav-toggle__bar::before,
+.nav-toggle__bar::after { content: ""; position: absolute; left: 0; }
+.nav-toggle__bar::before { top: -6px; }
+.nav-toggle__bar::after  { top: 6px; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar { background: transparent; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar::before { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar::after  { transform: translateY(-6px) rotate(-45deg); }
+
+.site-nav {
+  position: absolute;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  display: none;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.site-nav.is-open { display: block; }
+.site-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-2) var(--gutter) var(--sp-4);
+}
+.site-nav a {
+  display: block;
+  padding: var(--sp-3) 0;
+  color: var(--text-mute);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+}
+.site-nav li:last-child a { border-bottom: 0; }
+.site-nav a:hover { color: var(--text); }
+.site-nav a[aria-current="page"] { color: var(--gold); }
+
+@media (min-width: 860px) {
+  .nav-toggle { display: none; }
+  .site-nav {
+    position: static;
+    display: block;
+    background: none;
+    border: 0;
+  }
+  .site-nav ul {
+    display: flex;
+    gap: var(--sp-5);
+    padding: 0;
+  }
+  .site-nav a {
+    padding: var(--sp-2) 0;
+    border-bottom: 2px solid transparent;
+  }
+  .site-nav li:last-child a { border-bottom: 2px solid transparent; }
+  .site-nav a[aria-current="page"] { border-bottom-color: var(--gold); }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding-block: var(--sp-7) var(--sp-6);
+  border-bottom: 1px solid var(--border);
+  background:
+    radial-gradient(ellipse at top, rgba(245, 179, 1, 0.10), transparent 60%),
+    var(--bg);
+}
+.hero__eyebrow {
+  margin: 0 0 var(--sp-2);
+  color: var(--gold);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hero__title { font-size: var(--fs-3xl); margin-bottom: var(--sp-2); }
+.hero__slogan { font-size: var(--fs-lg); color: var(--text-mute); margin: 0; }
+
+/* ---------- Cabeçalho de página ---------- */
+.page-header {
+  padding-block: var(--sp-6) var(--sp-4);
+}
+.page-header p { color: var(--text-mute); margin: 0; }
+
+/* ---------- Seções e cards ---------- */
+.section { padding-block: var(--sp-5); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-5);
+}
+
+.placeholder {
+  border-style: dashed;
+  text-align: center;
+  color: var(--text-mute);
+}
+.placeholder strong { display: block; color: var(--text); margin-bottom: var(--sp-1); }
+
+/* ---------- Rodapé ---------- */
+.site-footer {
+  margin-top: var(--sp-8);
+  padding-block: var(--sp-6);
+  border-top: 1px solid var(--border);
+  color: var(--text-mute);
+  font-size: var(--fs-sm);
+}
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  justify-content: space-between;
+  align-items: center;
+}
+.site-footer p { margin: 0; }
+.site-footer a { color: var(--text); }
