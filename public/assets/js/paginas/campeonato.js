@@ -5,7 +5,7 @@ import { pontosDoResultado, pesoDaTemporada, temporadaDe } from '../ranking.js';
 import {
   esc, formatarPontos, rotuloPts, formatarData, plural, urlAtleta, urlAcademia, montarPagina, parametro,
   definirTitulo, naoEncontrado, rotuloCategoria, nomeNivel, nomeModalidade,
-  faixaBadge, pintarFaixas, medalha, seloPosicao,
+  faixaBadge, pintarFaixas, medalha, seloPosicao, situacaoTorneioFacil, urlTorneioFacil, hojeISO,
 } from '../render.js';
 
 montarPagina((dados, ctx) => {
@@ -40,13 +40,28 @@ montarPagina((dados, ctx) => {
         ${camp.modalidade.map((m) => `<li class="tag">${esc(nomeModalidade(m, ctx))}</li>`).join('')}
       </ul>
     </header>
+    ${fonteHTML()}
     ${resultados.length ? conteudo() : `
       <section class="container section">
         <div class="card placeholder">
-          <strong>Resultados ainda não lançados</strong>
-          Os pódios aparecem aqui depois da etapa.
+          <strong>${esc(situacaoTorneioFacil(camp, false).texto)}</strong>
+          ${camp.data >= hojeISO() ? 'Os pódios aparecem aqui depois da etapa.' : camp.torneioFacil ? 'Quando o organizador lançar os pódios no Torneio Fácil, eles entram aqui na próxima sincronização.' : 'Os pódios aparecem aqui quando forem lançados.'}
         </div>
       </section>`}`;
+
+  /** De onde vêm os resultados: links do Torneio Fácil e aviso de resultado parcial. */
+  function fonteHTML() {
+    const tf = camp.torneioFacil;
+    if (!tf?.slugs?.length) return '';
+    const sit = situacaoTorneioFacil(camp, resultados.length > 0);
+    const rotulo = (slug) => (/(^|-)no-?gi(-|$)/i.test(slug) ? 'no-gi' : tf.slugs.length > 1 ? 'gi' : '');
+    return `
+      <section class="container section fonte" aria-label="Fonte dos resultados">
+        <p>Fonte: ${tf.slugs.map((s) => `<a href="${urlTorneioFacil(s)}" rel="noopener">Torneio Fácil${rotulo(s) ? ` (${rotulo(s)})` : ''}</a>`).join(' · ')}
+          ${tf.verificadoEm ? `<span class="text-mute">· verificado em ${formatarData(tf.verificadoEm, { ano: true })}</span>` : ''}</p>
+        ${sit.tipo === 'parcial' ? `<p class="aviso">${esc(sit.texto)}. As demais categorias entram quando o organizador lançar os pódios.</p>` : ''}
+      </section>`;
+  }
   pintarFaixas(raiz, ctx);
 
   function conteudo() {

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   slugDoLink, lerBracketKey, modalidadeDoTorneio, nomeProprio, converterResultados, resolverJuntos, ligarAtletas,
+  ehDoEstado, nomeDoEvento, agruparTorneios, importarEtapa,
 } from '../ferramentas/torneiofacil.mjs';
 
 const mapa = JSON.parse(readFileSync(new URL('../ferramentas/torneiofacil-mapa.json', import.meta.url)));
@@ -151,4 +152,57 @@ test('o mapa só aponta para ids que existem em categorias.json', () => {
       assert.ok(ids(chaveCat).has(id), `${campo} "${termo}" → "${id}" não existe em categorias.${chaveCat}`);
     }
   }
+});
+
+// ---------- sincronização ----------
+
+const lista = [
+  { slug: 'xix-copa-teste-de-jiu-jitsu-cascavel-pr-gi', name: 'XIX COPA TESTE DE JIU JITSU GI', location: 'CASCAVEL - PR', date: '2026-02-22T00:00:00.000Z' },
+  { slug: 'xix-copa-teste-de-jiu-jitsu-cascavel-pr-nogi', name: 'XIX COPA TESTE DE JIU JITSU NOGI', location: 'Cáscavel-PR', date: '2026-02-22T00:00:00.000Z' },
+  { slug: 'open-teste-de-jiu-jitsu-2026-cascavel-pr-gi', name: 'OPEN TESTE DE JIU JITSU 2026', location: 'Cascavel - PR', date: '2026-05-01' },
+  { slug: 'copa-x-de-jiu-jitsu-maringa-pr-gi', name: 'COPA X DE JIU JITSU', location: 'Maringá - AM', date: '2025-04-12' },
+  { slug: 'open-candoi-de-jiu-jitsu-candoi-pr-gi', name: 'OPEN CANDÓI DE JIU JITSU', location: 'Ginásio Municipal - CANDÓI - PR', date: '2025-07-27' },
+  { slug: 'copa-x-de-jiu-jitsu-maringa-pr-gi-OLD', name: 'COPA X DE JIU JITSU', location: 'MARINGÁ - PR', date: '2025-04-12' },
+  { slug: 'copa-manaus-de-jiu-jitsu-manaus-am-gi', name: 'COPA MANAUS', location: 'Manaus - AM', date: '2025-04-12' },
+];
+
+test('torneio do estado pelo local ou pelo link (local com UF errada)', () => {
+  assert.deepEqual(lista.filter((t) => ehDoEstado(t, 'PR')).length, 6);
+  assert.equal(ehDoEstado(lista[3], 'PR'), true, 'Maringá - AM, mas link -pr-gi');
+  assert.equal(ehDoEstado(lista[6], 'PR'), false);
+});
+
+test('nome do evento: sem GI/NOGI, nome próprio, romanos e acentos certos', () => {
+  assert.equal(nomeDoEvento('XIX COPA PARANÁ DE JIU JITSU GI'), 'XIX Copa Paraná de Jiu-Jitsu');
+  assert.equal(nomeDoEvento('INTERNATIONAL CIRCUIT NO GI DE JIU-JITSU'), 'International Circuit de Jiu-Jitsu');
+  assert.equal(nomeDoEvento('OPEN CANDÓI DE JIU JITSU'), 'Open Candói de Jiu-Jitsu');
+  assert.equal(nomeDoEvento('II STI OPEN KIDS'), 'II STI Open Kids');
+});
+
+test('agrupa gi + no-gi do mesmo evento, corrige cidade e ignora links da lista', () => {
+  const ev = agruparTorneios(lista, { uf: 'PR', ignorar: ['copa-x-de-jiu-jitsu-maringa-pr-gi-OLD'], cidades: { 'Cáscavel': 'Cascavel' } });
+  assert.deepEqual(ev.map((e) => e.id), ['copa-x-de-jiu-jitsu-2025', 'open-candoi-de-jiu-jitsu-2025', 'xix-copa-teste-de-jiu-jitsu-2026', 'open-teste-de-jiu-jitsu-2026']);
+  const xix = ev.find((e) => e.id === 'xix-copa-teste-de-jiu-jitsu-2026');
+  assert.deepEqual(xix.modalidade, ['kimono', 'nogi']);
+  assert.equal(xix.slugs.length, 2);
+  assert.equal(xix.cidade, 'Cascavel');
+  assert.equal(ev.find((e) => e.id === 'copa-x-de-jiu-jitsu-2025').cidade, 'Maringá', 'cidade pelo link quando a UF do local está errada');
+  assert.equal(ev.find((e) => e.id === 'open-candoi-de-jiu-jitsu-2025').cidade, 'Candói', 'último trecho do local antes da UF');
+});
+
+test('importarEtapa substitui só os resultados da etapa e acrescenta a modalidade se pedido', () => {
+  const etapa = { id: 'copa-teste-2026', data: '2026-06-01', modalidade: ['nogi'] };
+  const dados = { ...dadosBase(), campeonatos: [...dadosBase().campeonatos, etapa],
+    resultados: [{ campeonatoId: 'antiga', atletaId: 'joao-da-silva-cl' }, { campeonatoId: 'copa-teste-2026', atletaId: 'x' }] };
+  const recusa = importarEtapa(dados, etapa, [resposta], mapa);
+  assert.deepEqual(recusa.foraDaEtapa, ['kimono']);
+  assert.equal(recusa.dados, dados, 'sem ajustar, nada muda');
+  const r = importarEtapa(dados, etapa, [resposta], mapa, { ajustarModalidade: true });
+  assert.deepEqual(r.etapa.modalidade, ['nogi', 'kimono']);
+  assert.equal(r.substituidos, 1);
+  assert.equal(r.encerradas, 3);
+  assert.equal(r.total, 4);
+  assert.ok(r.dados.resultados.some((x) => x.campeonatoId === 'antiga'), 'outras etapas intactas');
+  assert.ok(!r.dados.resultados.some((x) => x.atletaId === 'x'), 'resultado antigo da etapa substituído');
+  assert.ok(r.academiasNovas.every((a) => a.apelidos?.[0] === a.nome));
 });

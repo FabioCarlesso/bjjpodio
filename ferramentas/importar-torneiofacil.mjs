@@ -16,7 +16,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validarDados } from '../public/assets/js/ranking.js';
-import { API_RESULTADOS, slugDoLink, converterResultados, resolverJuntos, ligarAtletas } from './torneiofacil.mjs';
+import { API_RESULTADOS, slugDoLink, importarEtapa } from './torneiofacil.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ARQUIVOS = ['regras', 'categorias', 'campeonatos', 'academias', 'atletas', 'resultados'];
@@ -65,34 +65,17 @@ const respostas = [
   ...args.arquivos.map((f) => JSON.parse(readFileSync(f, 'utf8'))),
 ];
 
-let podios = [];
-let pendentes = 0;
-const desconhecidos = new Set();
-for (const resposta of respostas) {
-  const c = converterResultados(resposta, mapa);
-  podios = podios.concat(c.podios);
-  pendentes += c.pendentes;
-  c.desconhecidos.forEach((d) => desconhecidos.add(d));
-}
-if (desconhecidos.size) {
-  sair(`Termos do Torneio Fácil sem tradução. Adicione em ferramentas/torneiofacil-mapa.json (e em categorias.json, se for categoria nova):\n  - ${[...desconhecidos].join('\n  - ')}`);
-}
-const foraDaEtapa = [...new Set(podios.map((p) => p.modalidade))].filter((m) => !campeonato.modalidade.includes(m));
-if (foraDaEtapa.length) sair(`O torneio tem ${foraDaEtapa.join(', ')}, mas a etapa "${campeonato.id}" só tem ${campeonato.modalidade.join(', ')}. Ajuste a modalidade da etapa em campeonatos.json.`);
-
-const { resolvidos, semCategoria } = resolverJuntos(podios);
-
 const jaLancados = dados.resultados.filter((r) => r.campeonatoId === campeonato.id);
 if (jaLancados.length && !args.substituir) sair(`A etapa "${campeonato.id}" já tem ${jaLancados.length} resultados. Use --substituir para trocar pelos do Torneio Fácil.`);
-const base = { ...dados, resultados: dados.resultados.filter((r) => r.campeonatoId !== campeonato.id) };
 
-const lig = ligarAtletas(resolvidos, base, campeonato);
-const novo = {
-  ...base,
-  academias: [...dados.academias, ...lig.academiasNovas],
-  atletas: [...dados.atletas.map((a) => (lig.atualizacoes.has(a.id) ? { ...a, ...lig.atualizacoes.get(a.id) } : a)), ...lig.atletasNovos],
-  resultados: [...base.resultados, ...lig.resultados],
-};
+const imp = importarEtapa(dados, campeonato, respostas, mapa);
+if (imp.desconhecidos.size) {
+  sair(`Termos do Torneio Fácil sem tradução. Adicione em ferramentas/torneiofacil-mapa.json (e em categorias.json, se for categoria nova):\n  - ${[...imp.desconhecidos].join('\n  - ')}`);
+}
+if (imp.foraDaEtapa.length) sair(`O torneio tem ${imp.foraDaEtapa.join(', ')}, mas a etapa "${campeonato.id}" só tem ${campeonato.modalidade.join(', ')}. Ajuste a modalidade da etapa em campeonatos.json.`);
+const { podios, pendentes, semCategoria } = imp;
+const lig = imp;
+const novo = imp.dados;
 const erros = validarDados(novo);
 
 // ---------- relatório ----------
@@ -105,8 +88,8 @@ linha(`\nImportação Torneio Fácil → etapa "${campeonato.nome}" (${campeonat
 respostas.forEach((r) => linha(`  • ${r.tournament?.name ?? '?'} (${r.tournament?.slug ?? '?'})`));
 linha(`\nCategorias: ${new Set(podios.map((p) => p.bracketKey)).size} encerradas com pódio${pendentes ? `, ${pendentes} sem resultado (ignoradas)` : ''}`);
 linha(`Resultados: ${lig.resultados.length} (${Object.entries(porModalidade).map(([m, n]) => `${m} ${n}`).join(', ')}; absoluto ${lig.resultados.filter((r) => r.peso === 'absoluto').length})`);
-const resolvidosJuntos = resolvidos.filter((p) => p.resolvidoPor).length;
-if (resolvidosJuntos) linha(`Categorias juntadas: ${resolvidosJuntos} colocações com idade/faixa tiradas da categoria de peso do atleta`);
+const juntos = podios.filter((p) => p.juntos).length - semCategoria.length;
+if (juntos > 0) linha(`Categorias juntadas: ${juntos} colocações com idade/faixa tiradas da categoria de peso do atleta`);
 if (jaLancados.length) linha(`Substituídos: ${jaLancados.length} resultados antigos desta etapa`);
 linha(`Atletas: ${ligadosExistentes} já cadastrados, ${lig.atletasNovos.length} novos`);
 lig.atletasNovos.forEach((a) => linha(`  + ${a.nome} · ${nomeAcad.get(a.academiaId)} · ${a.faixa} (${a.id})`));
@@ -131,9 +114,7 @@ linha('\n✓ Validação ok');
 if (!args.gravar) {
   linha('Simulação: nada foi gravado. Rode de novo com --gravar para salvar.\n');
 } else {
-  // Academias novas guardam o nome original do Torneio Fácil em "apelidos" (para casar de novo mesmo se o nome for editado).
-  const academias = novo.academias.map((a) => (lig.academiasNovas.includes(a) ? { ...a, apelidos: [a.nome] } : a));
-  writeFileSync(join(args.dados, 'academias.json'), formatoBonito(academias));
+  writeFileSync(join(args.dados, 'academias.json'), formatoBonito(novo.academias));
   writeFileSync(join(args.dados, 'atletas.json'), umPorLinha(novo.atletas));
   writeFileSync(join(args.dados, 'resultados.json'), umPorLinha(novo.resultados));
   linha(`Gravado em ${args.dados}. Rode "npm test" e faça o commit.\n`);

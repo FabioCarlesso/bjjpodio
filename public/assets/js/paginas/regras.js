@@ -17,9 +17,10 @@ montarPagina((dados, ctx) => {
   const niveis = Object.entries(regras.pesoPorNivel).sort((a, b) => a[1] - b[1]);
   const atual = Number(regras.temporada);
   const temporadas = regras.pesoPorTemporada.map((peso, i) => [atual - i, peso]);
-  const etapasPorNivel = (nivel) => dados.campeonatos
-    .filter((c) => c.nivel === nivel && temporadaDe(c) === atual)
-    .map((c) => esc(c.nome)).join(', ');
+  const etapasPorNivel = (nivel) => {
+    const n = dados.campeonatos.filter((c) => c.nivel === nivel && temporadaDe(c) === atual).length;
+    return n ? `${n} ${n === 1 ? 'etapa' : 'etapas'} em ${atual}` : '';
+  };
   const f = formatarPontos;
 
   // Exemplos no formato da CBJJ, com os valores das regras atuais.
@@ -87,6 +88,7 @@ montarPagina((dados, ctx) => {
         <li>Atleta <strong>sozinho na chave</strong> também pontua.</li>
         <li><strong>Kimono e no-gi são rankings separados</strong>. A CBJJ só tem ranking de kimono; o circuito mantém o no-gi à parte, como a IBJJF.</li>
         <li>O ranking por academia soma os pontos de todos os seus atletas na modalidade.</li>
+        <li><strong>Torneios contemplados:</strong> todos os torneios de jiu-jitsu do Paraná cadastrados no Torneio Fácil. Só pontuam as categorias com pódio publicado lá. <a href="/campeonatos">Ver a lista e a situação de cada um</a>.</li>
       </ul>
     </section>
 

@@ -799,7 +799,7 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 .podio-categoria__pts small { font-family: var(--font-body); font-size: 0.75rem; color: var(--text-mute); }
 
 /* ---------- Tabelas ---------- */
-.tabela-rolagem { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.tabela-rolagem { position: relative; overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); } /* relative: texto oculto (leitor de tela) não estica a página */
 .tabela { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
 .tabela th, .tabela td { padding: var(--sp-3) var(--sp-4); border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; }
 .tabela thead th {
@@ -812,7 +812,7 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 }
 .tabela thead th small { text-transform: none; letter-spacing: 0; color: var(--gold); }
 .tabela tbody tr:last-child > * { border-bottom: 0; }
-.tabela tbody th { text-align: left; font-weight: 600; }
+.tabela tbody th { text-align: left; font-weight: 600; white-space: normal; min-width: 9rem; }
 .tabela tbody th a { color: var(--text); }
 .tabela th:first-child { text-align: left; }
 .tabela__num { font-family: var(--font-display); font-size: 1.25rem; font-variant-numeric: tabular-nums; }
@@ -839,14 +839,12 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
   transition: border-color var(--transition), background var(--transition);
 }
 .etapa:hover { border-color: var(--gold); background: var(--surface-2); }
-.etapa.is-proxima { border-style: dashed; }
 .etapa__info { display: grid; gap: 2px; min-width: 0; }
 .etapa__nome { color: var(--text); font-weight: 600; font-size: var(--fs-lg); text-decoration: none; }
 .etapa__nome::after { content: ""; position: absolute; inset: 0; } /* card inteiro clicável */
 .etapa:hover .etapa__nome { color: var(--gold); }
 .etapa__meta { color: var(--text-mute); font-size: var(--fs-sm); }
 .etapa__detalhe { font-size: var(--fs-sm); }
-.etapa.is-proxima .etapa__detalhe { color: var(--gold); }
 
 .bloco-data {
   display: grid;
@@ -1028,3 +1026,18 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 .lista-exemplos { margin-top: var(--sp-4); }
 .regras-tabelas .tabela thead th { white-space: normal; }
 .regras-tabelas .tabela th, .regras-tabelas .tabela td { padding-inline: var(--sp-3); }
+
+/* ---------- Torneios contemplados / fonte dos resultados ---------- */
+.contemplados { border-left: 4px solid var(--gold); }
+.contemplados h2 { margin-bottom: var(--sp-3); }
+.contemplados p:last-child { margin-bottom: 0; }
+.contemplados-linha { font-size: var(--fs-sm); margin: calc(-1 * var(--sp-2)) 0 var(--sp-4); }
+.titulo-contagem { color: var(--text-mute); font-size: 0.8em; }
+.etapa.is-futura { border-style: dashed; }
+.etapa.is-futura .etapa__detalhe { color: var(--gold); }
+.etapa.is-sem { opacity: 0.85; }
+.etapa.is-sem .etapa__detalhe { color: var(--text-mute); }
+.etapa.is-parcial .etapa__detalhe { color: var(--gold); }
+.fonte { padding-block: 0; font-size: var(--fs-sm); }
+.fonte p { margin: 0 0 var(--sp-2); }
+.aviso { padding: var(--sp-3) var(--sp-4); border-left: 4px solid var(--gold); background: var(--surface); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }

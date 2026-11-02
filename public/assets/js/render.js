@@ -117,12 +117,35 @@ export function rotuloRanking({ sexo, idade, faixa }, ctx) {
   return [ctx.sexos.get(sexo)?.nome, ctx.idades.get(idade)?.nome, ctx.faixas.get(faixa)?.nome].filter(Boolean).join(' ');
 }
 
-/** Etapas de uma temporada: realizadas (com resultado), última realizada e próxima sem resultado. */
+/** Data de hoje (fuso do visitante) no formato AAAA-MM-DD, para comparar com as datas das etapas. */
+export const hojeISO = () => new Date().toLocaleDateString('sv-SE');
+
+/**
+ * Etapas de uma temporada, pela data: realizadas (já aconteceram), comResultado (têm pódio lançado),
+ * ultima (última com resultado) e proxima (primeira a partir de hoje).
+ */
 export function etapasDaTemporada(dados, temporada) {
-  const comResultado = new Set(dados.resultados.map((r) => r.campeonatoId));
+  const hoje = hojeISO();
+  const lancadas = new Set(dados.resultados.map((r) => r.campeonatoId));
   const todas = dados.campeonatos.filter((c) => temporadaDe(c) === Number(temporada)).sort((a, b) => a.data.localeCompare(b.data));
-  const realizadas = todas.filter((c) => comResultado.has(c.id));
-  return { todas, realizadas, ultima: realizadas.at(-1), proxima: todas.find((c) => !comResultado.has(c.id)) };
+  const realizadas = todas.filter((c) => c.data < hoje);
+  const comResultado = todas.filter((c) => lancadas.has(c.id));
+  return { todas, realizadas, comResultado, ultima: comResultado.at(-1), proxima: todas.find((c) => c.data >= hoje) };
+}
+
+export const urlTorneioFacil = (slug) => `https://torneiofacil.com/resultados/${encodeURIComponent(slug)}`;
+
+/** Situação da etapa no Torneio Fácil, em texto curto ("19 de 114 categorias com pódio"). */
+export function situacaoTorneioFacil(c, temResultado) {
+  const tf = c.torneioFacil;
+  if (c.data >= hojeISO()) return { tipo: 'futura', texto: 'Ainda vai acontecer' };
+  if (temResultado && tf?.categorias && tf.categoriasComPodio < tf.categorias) {
+    return { tipo: 'parcial', texto: `Resultado parcial: ${tf.categoriasComPodio} de ${tf.categorias} categorias com pódio no Torneio Fácil` };
+  }
+  if (temResultado) return { tipo: 'completa', texto: 'Resultados lançados' };
+  if (!tf) return { tipo: 'sem', texto: 'Resultados ainda não lançados' };
+  if (!tf.categorias) return { tipo: 'sem', texto: 'Sem chaves no Torneio Fácil' };
+  return { tipo: 'sem', texto: 'Pódios não publicados no Torneio Fácil' };
 }
 
 /** Conta aberta de um resultado: "9 × 4 × 3 = 108". */
