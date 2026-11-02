@@ -136,10 +136,10 @@ export function pintarFaixas(raiz, ctx) {
   });
 }
 
-/** Contagem de uma medalha, com rótulo acessível ("5 ouros"). */
+/** Contagem de uma medalha. Leitor de tela ouve "5 ouros"; na tela aparece o ponto colorido e o número. */
 export function medalha(tipo, qtd) {
   const [, um, varios] = MEDALHAS.find(([t]) => t === tipo);
-  return `<span class="medalha medalha--${tipo}${qtd ? '' : ' is-zero'}" aria-label="${esc(plural(qtd, um, varios))}"><span class="medalha__dot" aria-hidden="true"></span><span aria-hidden="true">${qtd}</span></span>`;
+  return `<span class="medalha medalha--${tipo}${qtd ? '' : ' is-zero'}"><span class="medalha__dot" aria-hidden="true"></span>${qtd}<span class="visually-hidden"> ${qtd === 1 ? um : varios}</span></span>`;
 }
 
 export function posicaoTexto(p) {

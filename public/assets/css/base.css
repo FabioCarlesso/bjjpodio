@@ -1,3 +1,20 @@
+/* Fontes servidas pelo próprio site (sem Google Fonts: mais rápido e sem enviar IP de visitante a terceiros).
+   Subconjunto "latin": cobre acentos do português e o "º". Licenças em /assets/fonts/OFL-*.txt */
+@font-face {
+  font-family: "Barlow Condensed";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/barlow-condensed-700-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/assets/fonts/inter-400-600-latin.woff2") format("woff2");
+}
+
 /* Reset leve e tipografia base. */
 *, *::before, *::after { box-sizing: border-box; }
 

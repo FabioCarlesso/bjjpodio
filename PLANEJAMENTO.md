@@ -44,7 +44,7 @@ Contraste: texto `#f2f4f7` sobre `#0b0d10` e dourado sobre fundo escuro passam e
 
 - Títulos e números do ranking: **Barlow Condensed** (700), estilo esportivo
 - Texto: **Inter** (400/500/600)
-- Carregar via Google Fonts com `display=swap` (ou self-host em `.woff2` para performance)
+- Servidas pelo próprio site em `.woff2` (subconjunto latin, `font-display: swap`, preload). Sem Google Fonts: mais rápido e sem enviar IP de visitante a terceiros (LGPD). Licença OFL em `public/assets/fonts/`
 
 ### Tom de voz
 
@@ -343,6 +343,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 - [x] Implementar `ranking.js` com testes
 - [x] Construir `index.html` com pódio e filtros
 - [x] Páginas de atleta, etapa, etapas, academias e regras
+- [x] Polimento: imagem de prévia, ícones, fontes locais, acessibilidade (axe: 0 violações), cache
 - [ ] Deploy no `pages.dev`
 - [ ] Mandar o link para o professor
 
@@ -366,3 +367,16 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Página do atleta mostra a posição dele em cada categoria em que lutou, com link para o ranking da categoria |
 | 2026-11 | Página da etapa: pódios por categoria em acordeão (separados por modalidade) e quadro de medalhas por academia |
 | 2026-11 | Página de regras gerada a partir de `regras.json`: mudou a regra, a página muda junto |
+| 2026-11 | Fontes servidas pelo próprio site (sem Google Fonts) |
+| 2026-11 | Protótipo com `X-Robots-Tag: noindex`: nomes fictícios fora do Google; sem sitemap até ter dados reais |
+| 2026-11 | `og:image` aponta para `https://bjjpodio.pages.dev` (trocar se o endereço do Pages for outro) |
+| 2026-11 | CSS/JS sempre revalidados (sem hash no nome); fontes com cache de 1 ano; imagens 1 dia |
+
+---
+
+## 14. Antes de usar com dados reais
+
+- [ ] Remover `X-Robots-Tag: noindex` de `public/_headers` e criar `sitemap.xml` + `robots.txt`
+- [ ] Confirmar o endereço final e atualizar `og:image` (ver README)
+- [ ] Termo de ciência dos responsáveis pelos atletas menores de idade
+- [ ] Prévia de link por atleta/etapa (hoje o WhatsApp mostra o título genérico da página, porque a prévia não roda JavaScript). Dá para resolver na fase 2 com Pages Functions

@@ -94,10 +94,10 @@ function montarFiltros() {
   if (temporadas.length > 1) {
     partes.push(seletor('temporada', 'Temporada', null, temporadas.map((t) => ({ id: String(t), nome: String(t) }))));
   }
-  partes.push(seletor('faixa', 'Faixa', 'Todas as faixas', opcoes.faixa));
-  partes.push(seletor('idade', 'Idade', 'Todas as idades', opcoes.idade));
-  partes.push(seletor('peso', 'Peso', 'Todos os pesos', opcoes.peso));
-  partes.push(seletor('academia', 'Academia', 'Todas as academias', opcoes.academia));
+  partes.push(seletor('faixa', 'Faixa', 'Todas', opcoes.faixa));
+  partes.push(seletor('idade', 'Idade', 'Todas', opcoes.idade));
+  partes.push(seletor('peso', 'Peso', 'Todos', opcoes.peso));
+  partes.push(seletor('academia', 'Academia', 'Todas', opcoes.academia));
   partes.push('</div>');
 
   el.campos.innerHTML = partes.join('');

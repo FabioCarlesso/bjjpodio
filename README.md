@@ -31,6 +31,22 @@ Cloudflare → Workers & Pages → Create → Pages → Connect to Git → `bjjp
 
 Cada push na `main` publica em `bjjpodio.pages.dev`. Outras branches ganham URL de preview.
 
+### Endereço do site
+
+A imagem de prévia de link (`og:image`) precisa de endereço completo e está como `https://bjjpodio.pages.dev`. Se o Pages der outro endereço (ex.: `bjjpodio-abc.pages.dev`) ou quando houver domínio próprio, troque em todas as páginas:
+
+```bash
+grep -rl "bjjpodio.pages.dev" public | xargs sed -i 's#https://bjjpodio.pages.dev#https://NOVO-ENDERECO#g'
+```
+
+### Fora do Google durante o protótipo
+
+`public/_headers` envia `X-Robots-Tag: noindex` para os nomes fictícios não irem parar no Google. A prévia no WhatsApp continua funcionando. Remova a linha quando os dados forem reais.
+
+## Imagens
+
+`node ferramentas/gerar-imagens.cjs` gera a imagem de prévia (`og-image.png`, 1200×630) e os ícones em `public/assets/img/`. Requer Playwright.
+
 ## Testes
 
 ```bash

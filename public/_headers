@@ -1,14 +1,34 @@
+# X-Robots-Tag noindex: protótipo com dados fictícios fica fora do Google.
+# Remover essa linha quando os dados forem reais.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  X-Robots-Tag: noindex
+
+# Atenção: o Pages junta (com vírgula) cabeçalhos repetidos de regras que casam com o mesmo
+# caminho. Por isso não há regra genérica para /assets/*: cada pasta tem a sua.
 
 # Dados mudam a cada etapa: sempre revalidar para o ranking aparecer atualizado.
 /data/*
   Cache-Control: public, max-age=0, must-revalidate
 
-# Assets sem hash no nome: cache curto.
-/assets/*
-  Cache-Control: public, max-age=3600
+# CSS e JS sem hash no nome: revalidar sempre (resposta 304 é barata) para HTML e JS
+# nunca ficarem de versões diferentes depois de um deploy.
+/assets/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/assets/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Fontes não mudam (se mudar, trocar o nome do arquivo).
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/img/*
+  Cache-Control: public, max-age=86400
+
+/assets/logos/*
+  Cache-Control: public, max-age=86400

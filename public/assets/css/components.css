@@ -244,7 +244,7 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 
 .filtros__selects {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--sp-3);
 }
 .campo { display: grid; gap: var(--sp-1); min-width: 0; }
@@ -257,6 +257,7 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 }
 .campo__select {
   width: 100%;
+  text-overflow: ellipsis;
   min-height: 44px;
   padding: 0 2.25rem 0 var(--sp-3);
   border: 1px solid var(--border);
@@ -283,7 +284,7 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 @media (min-width: 860px) {
   .filtros__campos { display: flex; flex-wrap: wrap; align-items: end; gap: var(--sp-4) var(--sp-5); }
   .filtros__chips { padding-bottom: 4px; }
-  .filtros__selects { flex: 1 1 520px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .filtros__selects { flex: 1 1 520px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 }
 
 /* ---------- Títulos com categoria ---------- */
@@ -337,6 +338,9 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
   color: var(--text-mute);
   font-size: 0.75rem;
   line-height: 1.3;
+}
+@media (max-width: 479px) {
+  .podio__academia .faixa { display: none; } /* pouco espaço: a faixa aparece na lista */
 }
 .podio__pontos {
   margin: var(--sp-2) 0;
@@ -401,7 +405,8 @@ body:not(.is-pronto) .ranking-cab { visibility: hidden; }
 .medalha--ouros   { --cor: var(--gold); }
 .medalha--pratas  { --cor: var(--silver); }
 .medalha--bronzes { --cor: var(--bronze); }
-.medalha.is-zero { opacity: 0.35; }
+.medalha.is-zero { color: var(--text-mute); font-weight: 400; }
+.medalha.is-zero .medalha__dot { opacity: 0.35; }
 
 /* ---------- Ranking: lista (cards no celular, tabela no desktop) ---------- */
 .ranking-topo {
