@@ -284,7 +284,7 @@ Hospedagem: **Cloudflare Workers com arquivos estáticos**, conectado ao GitHub 
    - `html_handling = "auto-trailing-slash"`: `/atleta` serve `atleta.html`
    - `not_found_handling = "404-page"`: endereço inexistente serve `404.html`
    - `public/_headers` é aplicado (e não fica acessível como arquivo)
-4. Link de validação: `bjjpodio.<subdomínio-da-conta>.workers.dev`
+4. Link de validação: https://bjjpodio.fabio-carlesso.workers.dev
 5. Alternativa sem Git: `npx wrangler deploy`
 6. Após aprovação: registrar o domínio e adicionar no Worker → Settings → Domains & Routes
 
@@ -343,7 +343,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 - [x] Construir `index.html` com pódio e filtros
 - [x] Páginas de atleta, etapa, etapas, academias e regras
 - [x] Polimento: imagem de prévia, ícones, fontes locais, acessibilidade (axe: 0 violações), cache
-- [ ] Deploy no `workers.dev` e ajustar o endereço do `og:image`
+- [x] Deploy no `workers.dev` e ajustar o endereço do `og:image`
 - [ ] Mandar o link para o professor
 
 ---
@@ -368,7 +368,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Página de regras gerada a partir de `regras.json`: mudou a regra, a página muda junto |
 | 2026-11 | Fontes servidas pelo próprio site (sem Google Fonts) |
 | 2026-11 | Protótipo com `X-Robots-Tag: noindex`: nomes fictícios fora do Google; sem sitemap até ter dados reais |
-| 2026-11 | `og:image` precisa do endereço completo do site: trocar pelo endereço `workers.dev` real (comando no README) |
+| 2026-11 | `og:image` aponta para `https://bjjpodio.fabio-carlesso.workers.dev` (trocar quando houver domínio próprio; comando no README) |
 | 2026-11 | CSS/JS sempre revalidados (sem hash no nome); fontes com cache de 1 ano; imagens 1 dia |
 
 ---
@@ -376,6 +376,6 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 ## 14. Antes de usar com dados reais
 
 - [ ] Remover `X-Robots-Tag: noindex` de `public/_headers` e criar `sitemap.xml` + `robots.txt`
-- [ ] Confirmar o endereço final e atualizar `og:image` (ver README)
+- [ ] Com domínio próprio, atualizar o `og:image` (ver README)
 - [ ] Termo de ciência dos responsáveis pelos atletas menores de idade
 - [ ] Prévia de link por atleta/etapa (hoje o WhatsApp mostra o título genérico da página, porque a prévia não roda JavaScript). Dá para resolver na fase 2 com código no próprio Worker
