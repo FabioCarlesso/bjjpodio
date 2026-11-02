@@ -171,3 +171,398 @@
 }
 .site-footer p { margin: 0; }
 .site-footer a { color: var(--text); }
+
+/* ---------- Hero: meta da temporada ---------- */
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-6);
+  margin: var(--sp-5) 0 0;
+  font-size: var(--fs-sm);
+}
+.hero__meta dt {
+  color: var(--text-mute);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.hero__meta dd { margin: 0; }
+.hero__meta a { color: var(--text); font-weight: 600; }
+
+/* ---------- Estado (carregando / erro) ---------- */
+.estado { color: var(--text-mute); padding-block: var(--sp-5); }
+.estado.is-erro { color: var(--red); }
+body:not(.is-pronto) .podio,
+body:not(.is-pronto) #titulo-ranking,
+body:not(.is-pronto) .ranking-topo,
+body:not(.is-pronto) .ranking-cab { visibility: hidden; }
+
+/* ---------- Filtros ---------- */
+.filtros { padding-bottom: 0; }
+.filtros__campos { display: grid; gap: var(--sp-3); }
+.filtros__chips { display: flex; flex-wrap: wrap; gap: var(--sp-3) var(--sp-5); }
+
+.chips {
+  display: flex;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.chip { position: relative; }
+.chip input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-mute);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.chip:hover span { color: var(--text); border-color: var(--text-mute); }
+.chip input:checked + span {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+  font-weight: 600;
+}
+.chip input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.filtros__selects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--sp-3);
+}
+.campo { display: grid; gap: var(--sp-1); min-width: 0; }
+.campo__rotulo {
+  color: var(--text-mute);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.campo__select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 2.25rem 0 var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa4b2' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.6rem center / 18px;
+  appearance: none;
+  cursor: pointer;
+}
+.campo__select.is-ativo { border-color: var(--gold); }
+
+.botao-link {
+  margin-top: var(--sp-3);
+  padding: var(--sp-2) 0;
+  background: none;
+  border: 0;
+  color: var(--gold);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@media (min-width: 860px) {
+  .filtros__campos { display: flex; flex-wrap: wrap; align-items: end; gap: var(--sp-4) var(--sp-5); }
+  .filtros__chips { padding-bottom: 4px; }
+  .filtros__selects { flex: 1 1 520px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+}
+
+/* ---------- Títulos com categoria ---------- */
+.titulo-categoria { color: var(--gold); }
+.titulo-categoria::before { content: "· "; color: var(--text-mute); }
+
+/* ---------- Pódio ---------- */
+.podio__lista {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: end;
+  gap: var(--sp-2);
+}
+/* Ordem visual: 2º à esquerda, 1º no centro, 3º à direita. No DOM fica 1, 2, 3 (leitores de tela).
+   A altura do bloco segue a posição (is-ouro/is-prata/is-bronze), então empatados ficam na mesma altura. */
+.podio__item--1 { order: 2; }
+.podio__item--2 { order: 1; }
+.podio__item--3 { order: 3; }
+
+.podio__item {
+  --cor: var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+  position: relative;
+}
+.podio__item.is-ouro   { --cor: var(--gold); }
+.podio__item.is-prata  { --cor: var(--silver); }
+.podio__item.is-bronze { --cor: var(--bronze); }
+
+.podio__atleta {
+  color: var(--text);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  line-height: 1.25;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.podio__atleta::after { content: ""; position: absolute; inset: 0; } /* card inteiro clicável */
+.podio__atleta:hover { color: var(--cor); }
+.podio__academia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-top: 2px;
+  color: var(--text-mute);
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+.podio__pontos {
+  margin: var(--sp-2) 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.podio__pontos small { font-size: 0.8rem; color: var(--text-mute); }
+
+.podio__base {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding-top: var(--sp-3);
+  border-top: 4px solid var(--cor);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--cor) 22%, var(--surface)), var(--surface));
+}
+.podio__item           .podio__base { height: 64px; }
+.podio__item.is-ouro   .podio__base { height: 120px; }
+.podio__item.is-prata  .podio__base { height: 88px; }
+.podio__pos {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  line-height: 1;
+  color: var(--cor);
+}
+.podio__item.is-ouro .podio__pos { font-size: 3rem; }
+.podio__vazio { color: var(--text-mute); }
+
+@media (min-width: 720px) {
+  .podio__lista { max-width: 720px; margin-inline: auto; gap: var(--sp-4); }
+  .podio__atleta { font-size: var(--fs-lg); }
+  .podio__academia { font-size: var(--fs-sm); }
+  .podio__pontos { font-size: 2rem; }
+  .podio__item           .podio__base { height: 80px; }
+  .podio__item.is-ouro   .podio__base { height: 150px; }
+  .podio__item.is-prata  .podio__base { height: 110px; }
+}
+
+/* ---------- Faixa e medalhas ---------- */
+.faixa {
+  --faixa: var(--text-mute);
+  display: inline-block;
+  flex: none;
+  width: 18px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--faixa);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); /* faixa preta visível no fundo escuro */
+}
+
+.medalha {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.medalha__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cor); }
+.medalha--ouros   { --cor: var(--gold); }
+.medalha--pratas  { --cor: var(--silver); }
+.medalha--bronzes { --cor: var(--bronze); }
+.medalha.is-zero { opacity: 0.35; }
+
+/* ---------- Ranking: lista (cards no celular, tabela no desktop) ---------- */
+.ranking-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  margin-bottom: var(--sp-4);
+}
+.ranking-topo h2 { margin-bottom: var(--sp-1); }
+.ranking-resumo { margin: 0; font-size: var(--fs-sm); }
+
+.busca {
+  position: relative;
+  flex: 1 1 260px;
+  max-width: 360px;
+}
+.busca__icone {
+  position: absolute;
+  left: var(--sp-3);
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: var(--text-mute);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.busca input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--sp-3) 0 2.4rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.busca input::placeholder { color: var(--text-mute); }
+.busca input:focus { border-color: var(--gold); outline: none; }
+
+.ranking {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+.linha {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.75rem 1fr auto;
+  grid-template-areas:
+    "pos atleta pontos"
+    "pos stats  pontos";
+  align-items: center;
+  gap: 2px var(--sp-3);
+  padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: background var(--transition), border-color var(--transition);
+}
+.linha:hover { background: var(--surface-2); border-color: var(--text-mute); }
+
+.linha__pos {
+  grid-area: pos;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--text-mute);
+}
+.linha__pos.is-ouro   { color: var(--gold); }
+.linha__pos.is-prata  { color: var(--silver); }
+.linha__pos.is-bronze { color: var(--bronze); }
+
+.linha__atleta { grid-area: atleta; display: grid; min-width: 0; }
+.linha__nome {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.linha__nome::after { content: ""; position: absolute; inset: 0; } /* linha inteira clicável */
+.linha:hover .linha__nome { color: var(--gold); }
+.linha__academia {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-mute);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linha__stats {
+  grid-area: stats;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-1);
+  font-size: var(--fs-sm);
+}
+.linha__etapas { color: var(--text-mute); font-variant-numeric: tabular-nums; }
+
+.linha__pontos {
+  grid-area: pontos;
+  text-align: right;
+  white-space: nowrap;
+}
+.linha__pontos strong {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.linha__pontos small { color: var(--text-mute); }
+
+.ranking-cab { display: none; }
+
+.ranking-vazio p { margin: var(--sp-1) 0 0; }
+.ranking-nota { margin: var(--sp-5) 0 0; font-size: var(--fs-sm); }
+
+@media (min-width: 720px) {
+  .ranking-cab,
+  .linha {
+    grid-template-columns: 3.5rem minmax(0, 1fr) repeat(3, 4.5rem) 4.5rem 6rem;
+    grid-template-areas: none;
+  }
+  .ranking-cab {
+    display: grid;
+    gap: var(--sp-3);
+    padding: 0 var(--sp-4) var(--sp-2) var(--sp-2);
+    color: var(--text-mute);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .ranking-cab span:first-child { text-align: center; }
+  .ranking-cab span:nth-child(n + 3) { text-align: center; }
+  .ranking-cab span:last-child { text-align: right; }
+
+  .ranking { gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .linha {
+    gap: var(--sp-3);
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+  }
+  .linha:last-child { border-bottom: 0; }
+  .linha:nth-child(even) { background: color-mix(in srgb, var(--surface-2) 50%, var(--surface)); }
+  .linha:hover { background: var(--surface-2); }
+  .linha__pos, .linha__atleta, .linha__pontos { grid-area: auto; }
+  .linha__stats { display: contents; }
+  .linha__stats > * { justify-self: center; }
+  .medalha { font-size: var(--fs-md); }
+  .linha__etapas-rot { display: none; }
+}

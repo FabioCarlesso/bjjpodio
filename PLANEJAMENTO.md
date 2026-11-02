@@ -340,7 +340,7 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 - [ ] Conectar o repositório no painel do Cloudflare Pages
 - [x] Gerar dados fictícios (temporada 2026 em andamento)
 - [x] Implementar `ranking.js` com testes
-- [ ] Construir `index.html` com pódio e filtros
+- [x] Construir `index.html` com pódio e filtros
 - [ ] Deploy no `pages.dev`
 - [ ] Mandar o link para o professor
 
@@ -357,3 +357,6 @@ Link do protótipo com dados fictícios e o pedido: *"Abre no celular e me diz o
 | 2026-11 | Atletas, academias e nomes de etapas **inventados**; cidades reais do Paraná |
 | 2026-11 | Sem WhatsApp no rodapé por enquanto |
 | 2026-11 | Categoria (faixa, idade, peso) gravada no resultado; atleta guarda só o ano de nascimento |
+| 2026-11 | Página inicial na ordem: hero → filtros de categoria → pódio → busca + lista (a busca não altera o pódio) |
+| 2026-11 | Filtros ficam na URL (`/?faixa=azul&peso=leve`) para compartilhar o link de uma categoria |
+| 2026-11 | Lista de ranking em `<ol>`: cards no celular, tabela a partir de 720 px |

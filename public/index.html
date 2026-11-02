@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <script type="module" src="/assets/js/layout.js"></script>
+  <script type="module" src="/assets/js/paginas/inicio.js"></script>
 </head>
 <body data-page="ranking">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -27,17 +28,50 @@
   <main id="conteudo">
     <section class="hero">
       <div class="container">
-        <p class="hero__eyebrow">Temporada 2026</p>
+        <p class="hero__eyebrow">Temporada <span data-temporada>2026</span></p>
         <h1 class="hero__title">BJJ Pódio</h1>
         <p class="hero__slogan">Cada luta conta.</p>
+        <dl class="hero__meta" id="hero-meta" hidden></dl>
       </div>
     </section>
-    <section class="container section">
-      <h2>Quem lidera</h2>
-      <div class="card placeholder">
-        <strong>Ranking geral em construção</strong>
-        Pódio dos 3 primeiros, filtros por faixa, peso, idade e kimono / no-gi, busca por nome e tabela completa.
+
+    <form class="container section filtros" id="filtros" aria-label="Filtrar ranking por categoria">
+      <div id="filtros-campos" class="filtros__campos"></div>
+      <button type="button" class="botao-link" id="limpar-filtros" hidden>Limpar filtros</button>
+    </form>
+
+    <p class="container estado" id="estado" role="status">Carregando ranking…</p>
+
+    <section class="container section podio" aria-labelledby="titulo-podio">
+      <h2 id="titulo-podio">Quem lidera <span class="titulo-categoria" id="podio-categoria"></span></h2>
+      <div id="podio"></div>
+    </section>
+
+    <section class="container section" aria-labelledby="titulo-ranking">
+      <div class="ranking-topo">
+        <div>
+          <h2 id="titulo-ranking">Ranking</h2>
+          <p class="text-mute ranking-resumo" id="ranking-resumo" aria-live="polite"></p>
+        </div>
+        <label class="busca">
+          <span class="visually-hidden">Buscar atleta pelo nome</span>
+          <svg class="busca__icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="busca" form="filtros" placeholder="Buscar atleta" autocomplete="off" enterkeyhint="search">
+        </label>
       </div>
+
+      <div class="ranking-cab" id="ranking-cab" aria-hidden="true">
+        <span>#</span><span>Atleta</span>
+        <span class="ranking-cab__medalha">Ouro</span><span class="ranking-cab__medalha">Prata</span><span class="ranking-cab__medalha">Bronze</span>
+        <span>Etapas</span><span>Pontos</span>
+      </div>
+      <ol class="ranking" id="ranking" aria-labelledby="titulo-ranking"></ol>
+      <div class="ranking-vazio card placeholder" id="ranking-vazio" hidden>
+        <strong>Nenhum atleta encontrado</strong>
+        <p></p>
+      </div>
+
+      <p class="ranking-nota text-mute" id="ranking-nota"></p>
     </section>
   </main>
 
